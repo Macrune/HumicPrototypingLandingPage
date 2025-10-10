@@ -1,0 +1,21 @@
+const express = require('express');
+const dotenv = require('dotenv');
+const db = require('./config/db.js');
+const staffRouter = require('./routes/staffRoute.js');
+const partnerRouter = require('./routes/partnerRoute.js');
+const path = require('path');
+
+dotenv.config();
+const app = express();
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+
+// Routes
+app.use('/api/staff', staffRouter);
+app.use('/api/partners', partnerRouter);
+app.use('/img', express.static(path.join(__dirname, process.env.IMG_DIR || 'img')));
+
+app.listen(PORT, () => {
+    console.log('Server is running on port 3000');
+});
