@@ -1,5 +1,8 @@
 const express = require('express');
 const partnerModel = require('../models/partnerModel.js');
+const multer = require('../middleware/multer.js');
+const fileHelper = require('../config/fileHelper.js');
+const path = require('path');
 
 const router = express.Router();
 
@@ -25,25 +28,57 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-    const { nama, deskripsi, link, logo } = req.body;
+router.post('/', multer.single('logo'), async (req, res) => {
+    const { nama, deskripsi, link } = req.body;
+    const logo = req.file;
     try {
-        const [result] = await partnerModel.create(nama, deskripsi, link, logo);
-        res.status(201).json({ id: result.insertId, nama, deskripsi, link, logo });
+        const logoPath = await uploadImage(logo);
+        const [result] = await partnerModel.create(nama, deskripsi, link, logoPath);
+        res.status(201).json({ id: result.insertId, nama, deskripsi, link, logoPath });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
+const uploadImage = async (image) => {
+    try {
+        if (!image) {
+            throw new Error('No image file provided');
+        }
+
+        const filePath = `/img/${image.filename}`;
+        return filePath;
+    } catch (error) {
+        throw new Error('Image upload failed: ' + error.message);
+    }
+};
+
 router.patch('/:id', async (req, res) => {
     const { id } = req.params;
-    const { nama, deskripsi, link, logo } = req.body;
+    const { nama, deskripsi, link } = req.body;
+    const logo = req.file;
     try {
-        const [result] = await partnerModel.update(id, nama, deskripsi, link, logo);
+        const [rows] = await partnerModel.findById(id);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Partner not found' });
+        }
+        const original = rows[0];
+        nama = nama ?? original.nama;
+        deskripsi = deskripsi ?? original.deskripsi;
+        link = link ?? original.link;
+
+        let logoPath = original.logo;
+        if (logo) {
+            const oldFile = path.basename(logoPath);
+            await fileHelper.deleteFile(oldFile);
+            logoPath = await uploadImage(logo);
+        }
+
+        const [result] = await partnerModel.update(id, nama, deskripsi, link, logoPath);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Partner not found' });
         }
-        res.json({ id, nama, deskripsi, link, logo });
+        res.json({ id, nama, deskripsi, link, logoPath });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
