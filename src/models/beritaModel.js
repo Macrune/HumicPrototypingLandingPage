@@ -9,25 +9,25 @@ const beritaModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
-    create: (judul, tanggal, isi, penulis, image) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (judul, tanggal, isi, penulis, image) VALUES (?, ?, ?, ?, ?)', 
+    create: (judul, tanggal, isi, penulis, image_path) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (judul, tanggal, isi, penulis, image_path) VALUES (?, ?, ?, ?, ?)', 
             [
                 judul,
                 tanggal,
                 isi,
                 penulis,
-                image
+                image_path
             ]
         );
     },
-    update: (id, judul, tanggal, isi, penulis, image) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET judul = ?, tanggal = ?, isi = ?, penulis = ?, image = ? WHERE id = ?',
+    update: (id, judul, tanggal, isi, penulis, image_path) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET judul = ?, tanggal = ?, isi = ?, penulis = ?, image_path = ? WHERE id = ?',
             [
                 judul,
                 tanggal,
                 isi,
                 penulis,
-                image,
+                image_path,
                 id
             ]
         );

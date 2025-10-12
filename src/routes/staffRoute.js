@@ -22,11 +22,11 @@ router.get('/:id', async (req, res) => {
     try {
         const [rows] = await staffModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorStaffRouteGI: 'Staff member not found' });
+            return res.status(404).json({ errorStaffRouteGI1: 'Staff member not found' });
         }
         res.json(rows[0]);
     } catch (err) {
-        res.status(500).json({ errorStaffRouteGI: err.message });
+        res.status(500).json({ errorStaffRouteGI2: err.message });
     }
 });
 
@@ -74,7 +74,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
     try {
         const [rows] = await staffModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorStaffRouteD: 'Staff member not found' });
+            return res.status(404).json({ errorStaffRoutePa1: 'Staff member not found' });
         }
 
         // Use original values if any field is null or undefined
@@ -99,9 +99,6 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
         const [result] = await staffModel.update(
             id, nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, imagepath
         );
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ errorStaffRoutePa1: 'Staff member not found' });
-        }
         res.json({ id, nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, image_path: imagepath });
     } catch (err) {
         res.status(500).json({ errorStaffRoutePa2: err.message });
@@ -114,7 +111,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await staffModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorStaffRouteD: 'Staff member not found' });
+            return res.status(404).json({ errorStaffRouteDe1: 'Staff member not found' });
         }
         const imagePath = rows[0].image_path;
         if (imagePath) {
@@ -122,12 +119,9 @@ router.delete('/:id', async (req, res) => {
             await fileHelper.deleteFile(fileName);
         }
         const [result] = await staffModel.delete(id);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ errorStaffRouteD: 'Staff member not found' });
-        }
-        res.status(204).end();
+        res.json({ message: 'Staff member deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorStaffRouteD: err.message });
+        res.status(500).json({ errorStaffRouteDe2: err.message });
     }
 });
 

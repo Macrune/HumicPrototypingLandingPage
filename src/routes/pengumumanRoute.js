@@ -42,7 +42,7 @@ const uploadImage = async (image) => {
 };
 
 router.post('/', multer.single('image'), async (req, res) => {
-    const { isi, tanggal } = req.body;
+    const { isi, tanggal} = req.body;
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
@@ -55,12 +55,12 @@ router.post('/', multer.single('image'), async (req, res) => {
 
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    const { isi, tanggal } = req.body;
+    let { isi, tanggal } = req.body;
     const image = req.file;
     try {
         const [rows] = await pengumumanModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRoutePa: 'Pengumuman not found' });
+            return res.status(404).json({ errorPengumumanRoutePa1: 'Pengumuman not found' });
         }
         const original = rows[0];
         isi = isi ?? original.isi;
@@ -72,10 +72,10 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await pengumumanModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagePath);
-        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagePath });
+        await pengumumanModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagepath);
+        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagepath });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRoutePa: err.message });
+        res.status(500).json({ errorPengumumanRoutePa2: err.message });
     }
 });
 
@@ -84,7 +84,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await pengumumanModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRouteDe: 'Pengumuman not found' });
+            return res.status(404).json({ errorPengumumanRouteDe1: 'Pengumuman not found' });
         }
 
         let imagepath = rows[0].image_path;
@@ -96,7 +96,7 @@ router.delete('/:id', async (req, res) => {
         await pengumumanModel.delete(id);
         res.json({ message: 'Pengumuman deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteDe: err.message });
+        res.status(500).json({ errorPengumumanRouteDe2: err.message });
     }
 });
 

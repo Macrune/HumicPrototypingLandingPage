@@ -47,7 +47,7 @@ router.post('/', multer.single('image'), async (req, res) => {
         const imagePath = await uploadImage(image);
         const penulis = req.body.penulis || 'Admin';
         const [result] = await beritaModel.create(judul, tanggal, isi, penulis, imagePath);
-        res.status(201).json({ id: result.insertId, judul, isi, tanggal, penulis, imagePath });
+        res.status(201).json({ id: result.insertId, judul, tanggal, isi, penulis, imagePath });
     } catch (err) {
         res.status(500).json({ errorBeritaRoutePo: err.message });
     }
@@ -60,7 +60,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
     try {
         const [rows] = await beritaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorBeritaRoutePa: 'Berita not found' });
+            return res.status(404).json({ errorBeritaRoutePa1: 'Berita not found' });
         }
         const original = rows[0];
         judul = judul ?? original.judul;
@@ -74,10 +74,10 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await beritaModel.update(id, judul, isi, tanggal, penulis, imagePath);
-        res.json({ id, judul, isi, tanggal, penulis, imagePath });
+        await beritaModel.update(id, judul, tanggal, isi, penulis, imagepath);
+        res.json({ id, judul, tanggal, isi, penulis, imagepath });
     } catch (err) {
-        res.status(500).json({ errorBeritaRoutePa: err.message });
+        res.status(500).json({ errorBeritaRoutePa2: err.message });
     }
 });
 
@@ -86,7 +86,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await beritaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorBeritaRouteDe: 'Berita not found' });
+            return res.status(404).json({ errorBeritaRouteDe1: 'Berita not found' });
         }
         const imagePath = rows[0].image_path;
         if (imagePath) {
@@ -96,6 +96,8 @@ router.delete('/:id', async (req, res) => {
         await beritaModel.delete(id);
         res.json({ message: 'Berita deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorBeritaRouteDe: err.message });
+        res.status(500).json({ errorBeritaRouteDe2: err.message });
     }
 });
+
+module.exports = router;

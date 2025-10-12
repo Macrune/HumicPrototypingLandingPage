@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         const [rows] = await partnerModel.findAll();
         res.json(rows);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ errorPartnerRouteGe: err.message });
     }
 });
 
@@ -24,7 +24,7 @@ router.get('/:id', async (req, res) => {
         }
         res.json(rows[0]);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ errorPartnerRouteGI: err.message });
     }
 });
 
@@ -36,7 +36,7 @@ router.post('/', multer.single('logo'), async (req, res) => {
         const [result] = await partnerModel.create(nama, deskripsi, link, logoPath);
         res.status(201).json({ id: result.insertId, nama, deskripsi, link, logoPath });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ errorPartnerRoutePo: err.message });
     }
 });
 
@@ -53,14 +53,14 @@ const uploadImage = async (image) => {
     }
 };
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', multer.single('logo'), async (req, res) => {
     const { id } = req.params;
-    const { nama, deskripsi, link } = req.body;
+    let { nama, deskripsi, link } = req.body;
     const logo = req.file;
     try {
         const [rows] = await partnerModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'Partner not found' });
+            return res.status(404).json({ errorPartnerRoutePa1: 'Partner not found' });
         }
         const original = rows[0];
         nama = nama ?? original.nama;
@@ -75,12 +75,9 @@ router.patch('/:id', async (req, res) => {
         }
 
         const [result] = await partnerModel.update(id, nama, deskripsi, link, logoPath);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Partner not found' });
-        }
         res.json({ id, nama, deskripsi, link, logoPath });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ errorPartnerRoutePa2: err.message });
     }
 });
 
@@ -89,9 +86,9 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await partnerModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'Partner not found' });
+            return res.status(404).json({ errorPartnerRouteDe1: 'Partner not found' });
         }
-        
+
         const imagePath = rows[0].logo;
         if (imagePath) {
             const oldFile = path.basename(imagePath);
@@ -99,12 +96,9 @@ router.delete('/:id', async (req, res) => {
         }
 
         const [result] = await partnerModel.delete(id);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Partner not found' });
-        }
         res.json({ message: 'Partner deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ errorPartnerRouteDe2: err.message });
     }
 });
 

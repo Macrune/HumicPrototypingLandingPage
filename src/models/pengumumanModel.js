@@ -9,14 +9,14 @@ const pengumumanModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
-    create: (isi, tanggal) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (isi, tanggal) VALUES (?, ?)', 
-            [isi, tanggal]
+    create: (isi, tanggal, image_path) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (isi, tanggal, image_path) VALUES (?, ?, ?)', 
+            [isi, tanggal, image_path]
         );
     },
-    update: (id, isi, tanggal) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET isi = ?, tanggal = ? WHERE id = ?',
-            [isi, tanggal, id]
+    update: (id, isi, tanggal, image_path) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET isi = ?, tanggal = ?, image_path = ? WHERE id = ?',
+            [isi, tanggal, image_path, id]
         );
     },
     delete: async (id) => {

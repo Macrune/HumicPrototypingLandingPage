@@ -54,12 +54,12 @@ router.post('/', multer.single('image'), async (req, res) => {
 
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    const { isi, tanggal } = req.body;
+    let { isi, tanggal } = req.body;
     const image = req.file;
     try {
         const [rows] = await agendaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorAgendaRoutePa: 'Agenda not found' });
+            return res.status(404).json({ errorAgendaRoutePa1: 'Agenda not found' });
         }
         const original = rows[0];
         isi = isi ?? original.isi;
@@ -74,7 +74,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
         await agendaModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagepath);
         res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagepath });
     } catch (err) {
-        res.status(500).json({ errorAgendaRoutePa: err.message });
+        res.status(500).json({ errorAgendaRoutePa2: err.message });
     }
 });
 
@@ -83,7 +83,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await agendaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorAgendaRouteDe: 'Agenda not found' });
+            return res.status(404).json({ errorAgendaRouteDe1: 'Agenda not found' });
         }
         let imagepath = rows[0].image_path;
         if (imagepath) {
@@ -91,12 +91,9 @@ router.delete('/:id', async (req, res) => {
             await fileHelper.deleteFile(oldFile);
         }
         const [result] = await agendaModel.delete(id);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ errorAgendaRouteDe: 'Agenda not found' });
-        }
         res.json({ message: 'Agenda deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorAgendaRouteDe: err.message });
+        res.status(500).json({ errorAgendaRouteDe2: err.message });
     }
 });
 
