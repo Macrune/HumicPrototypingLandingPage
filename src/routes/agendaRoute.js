@@ -1,5 +1,5 @@
 const express = require('express');
-const pengumumanModel = require('../models/pengumumanModel.js');
+const agendaModel = require('../models/agendaModel.js');
 const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
@@ -8,23 +8,23 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pengumumanModel.findAll();
+        const [rows] = await agendaModel.findAll();
         res.json(rows);
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteGe: err.message });
+        res.status(500).json({ errorAgendaRouteGe: err.message });
     }
 });
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await agendaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRouteGI: 'Pengumuman not found' });
-        }
+            return res.status(404).json({ errorAgendaRouteGI: 'Agenda not found' });
+        } 
         res.json(rows[0]);
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteGI: err.message });
+        res.status(500).json({ errorAgendaRouteGI: err.message });
     }
 });
 
@@ -33,7 +33,6 @@ const uploadImage = async (image) => {
         if (!image) {
             throw new Error('No image file provided');
         }
-
         const filePath = `/img/${image.filename}`;
         return filePath;
     } catch (error) {
@@ -46,10 +45,10 @@ router.post('/', multer.single('image'), async (req, res) => {
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
-        const [result] = await pengumumanModel.create(isi, tanggal, imagePath);
+        const [result] = await agendaModel.create(isi, tanggal, imagePath);
         res.status(201).json({ id: result.insertId, isi, tanggal, imagePath });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRoutePo: err.message });
+        res.status(500).json({ errorAgendaRoutePo: err.message });
     }
 });
 
@@ -58,45 +57,46 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
     const { isi, tanggal } = req.body;
     const image = req.file;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await agendaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRoutePa: 'Pengumuman not found' });
+            return res.status(404).json({ errorAgendaRoutePa: 'Agenda not found' });
         }
         const original = rows[0];
         isi = isi ?? original.isi;
         tanggal = tanggal ?? original.tanggal;
-        
+
         let imagepath = original.image_path;
         if (image) {
             const oldFile = path.basename(imagepath);
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await pengumumanModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagePath);
-        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagePath });
+        await agendaModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagepath);
+        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagepath });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRoutePa: err.message });
+        res.status(500).json({ errorAgendaRoutePa: err.message });
     }
 });
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await agendaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRouteDe: 'Pengumuman not found' });
+            return res.status(404).json({ errorAgendaRouteDe: 'Agenda not found' });
         }
-
         let imagepath = rows[0].image_path;
         if (imagepath) {
             const oldFile = path.basename(imagepath);
             await fileHelper.deleteFile(oldFile);
         }
-
-        await pengumumanModel.delete(id);
-        res.json({ message: 'Pengumuman deleted successfully' });
+        const [result] = await agendaModel.delete(id);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ errorAgendaRouteDe: 'Agenda not found' });
+        }
+        res.json({ message: 'Agenda deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteDe: err.message });
+        res.status(500).json({ errorAgendaRouteDe: err.message });
     }
 });
 

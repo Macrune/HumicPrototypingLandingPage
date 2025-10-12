@@ -87,6 +87,17 @@ router.patch('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
+        const [rows] = await partnerModel.findById(id);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Partner not found' });
+        }
+        
+        const imagePath = rows[0].logo;
+        if (imagePath) {
+            const oldFile = path.basename(imagePath);
+            await fileHelper.deleteFile(oldFile);
+        }
+
         const [result] = await partnerModel.delete(id);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Partner not found' });

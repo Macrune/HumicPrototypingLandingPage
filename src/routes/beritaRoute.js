@@ -1,5 +1,5 @@
 const express = require('express');
-const pengumumanModel = require('../models/pengumumanModel.js');
+const beritaModel = require('../models/beritaModel.js');
 const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
@@ -8,23 +8,23 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pengumumanModel.findAll();
+        const [rows] = await beritaModel.findAll();
         res.json(rows);
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteGe: err.message });
+        res.status(500).json({ errorBeritaRouteGe: err.message });
     }
 });
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await beritaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRouteGI: 'Pengumuman not found' });
+            return res.status(404).json({ errorBeritaRouteGI: 'Berita not found' });
         }
         res.json(rows[0]);
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteGI: err.message });
+        res.status(500).json({ errorBeritaRouteGI: err.message });
     }
 });
 
@@ -33,7 +33,6 @@ const uploadImage = async (image) => {
         if (!image) {
             throw new Error('No image file provided');
         }
-
         const filePath = `/img/${image.filename}`;
         return filePath;
     } catch (error) {
@@ -42,62 +41,61 @@ const uploadImage = async (image) => {
 };
 
 router.post('/', multer.single('image'), async (req, res) => {
-    const { isi, tanggal } = req.body;
+    const { judul, isi, tanggal } = req.body;
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
-        const [result] = await pengumumanModel.create(isi, tanggal, imagePath);
-        res.status(201).json({ id: result.insertId, isi, tanggal, imagePath });
+        const penulis = req.body.penulis || 'Admin';
+        const [result] = await beritaModel.create(judul, tanggal, isi, penulis, imagePath);
+        res.status(201).json({ id: result.insertId, judul, isi, tanggal, penulis, imagePath });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRoutePo: err.message });
+        res.status(500).json({ errorBeritaRoutePo: err.message });
     }
 });
 
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    const { isi, tanggal } = req.body;
+    let { judul, isi, tanggal, penulis } = req.body;
     const image = req.file;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await beritaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRoutePa: 'Pengumuman not found' });
+            return res.status(404).json({ errorBeritaRoutePa: 'Berita not found' });
         }
         const original = rows[0];
+        judul = judul ?? original.judul;
         isi = isi ?? original.isi;
         tanggal = tanggal ?? original.tanggal;
-        
+        penulis = penulis ?? original.penulis;
+
         let imagepath = original.image_path;
         if (image) {
             const oldFile = path.basename(imagepath);
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await pengumumanModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagePath);
-        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagePath });
+        await beritaModel.update(id, judul, isi, tanggal, penulis, imagePath);
+        res.json({ id, judul, isi, tanggal, penulis, imagePath });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRoutePa: err.message });
+        res.status(500).json({ errorBeritaRoutePa: err.message });
     }
 });
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pengumumanModel.findById(id);
+        const [rows] = await beritaModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorPengumumanRouteDe: 'Pengumuman not found' });
+            return res.status(404).json({ errorBeritaRouteDe: 'Berita not found' });
         }
-
-        let imagepath = rows[0].image_path;
-        if (imagepath) {
-            const oldFile = path.basename(imagepath);
+        const imagePath = rows[0].image_path;
+        if (imagePath) {
+            const oldFile = path.basename(imagePath);
             await fileHelper.deleteFile(oldFile);
         }
-
-        await pengumumanModel.delete(id);
-        res.json({ message: 'Pengumuman deleted successfully' });
+        await beritaModel.delete(id);
+        res.json({ message: 'Berita deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorPengumumanRouteDe: err.message });
+        res.status(500).json({ errorBeritaRouteDe: err.message });
     }
 });
-
-module.exports = router;
