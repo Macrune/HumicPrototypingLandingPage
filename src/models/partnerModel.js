@@ -1,14 +1,16 @@
 const db = require('../config/db.js');
 
+const TABLE_NAME = 'partnership';
+
 const partnerModel = {
     findAll: () => {
-        return db.query('SELECT * FROM partnership');
+        return db.query('SELECT * FROM ' + TABLE_NAME);
     },
     findById: (id) => {
-        return db.query('SELECT * FROM partnership WHERE id = ?', [id]);
+        return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
     create: (nama, deskripsi, link, logo) => {
-        return db.query('INSERT INTO partnership (nama, deskripsi, link, logo) VALUES (?, ?, ?, ?)', 
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (nama, deskripsi, link, logo) VALUES (?, ?, ?, ?)', 
             [
                 nama,
                 deskripsi,
@@ -18,7 +20,7 @@ const partnerModel = {
         );
     },
     update: (id, nama, deskripsi, link, logo) => {
-        return db.query('UPDATE partnership SET nama = ?, deskripsi = ?, link = ?, logo = ? WHERE id = ?',
+        return db.query('UPDATE ' + TABLE_NAME + ' SET nama = ?, deskripsi = ?, link = ?, logo = ? WHERE id = ?',
             [
                 nama,
                 deskripsi,
@@ -29,7 +31,7 @@ const partnerModel = {
         );
     },
     delete: async (id) => {
-        return db.query('DELETE FROM partnership WHERE id = ?', [id]);
+        return db.query('DELETE FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     }
 };
 

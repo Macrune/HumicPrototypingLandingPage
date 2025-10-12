@@ -1,12 +1,13 @@
 const db = require('../config/db.js');
-const fileHelper = require('../config/fileHelper.js');
+
+const TABLE_NAME = 'staff';
 
 const staffModel = {
     findAll: () => {
-        return db.query('SELECT * FROM staff');
+        return db.query('SELECT * FROM ' + TABLE_NAME);
     },
     findById: (id) => {
-        return db.query('SELECT * FROM staff WHERE id = ?', [id]);
+        return db.query('SELECT * FROM ' + TABLE_NAME +' WHERE id = ?', [id]);
     },
     create: (
         nama,
@@ -20,7 +21,7 @@ const staffModel = {
         sosmed,
         image_path
     ) => {
-        return db.query('INSERT INTO staff (nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
             [
                 nama,
                 posisi,
@@ -48,7 +49,7 @@ const staffModel = {
         sosmed,
         image_path
     ) => {
-        return db.query('UPDATE staff SET nama = ?, posisi = ?, deskripsi = ?, edukasi = ?, publikasi = ?, email = ?, kontak = ?, linkedin = ?, sosmed = ?, image_path = ? WHERE id = ?', 
+        return db.query('UPDATE ' + TABLE_NAME + ' SET nama = ?, posisi = ?, deskripsi = ?, edukasi = ?, publikasi = ?, email = ?, kontak = ?, linkedin = ?, sosmed = ?, image_path = ? WHERE id = ?', 
             [
                 nama,
                 posisi,
@@ -65,7 +66,7 @@ const staffModel = {
         );
     },
     delete: async (id) => {
-        return db.query('DELETE FROM staff WHERE id = ?', [id]);
+        return db.query('DELETE FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     } 
 };
 
