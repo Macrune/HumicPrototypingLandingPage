@@ -42,12 +42,12 @@ const uploadImage = async (image) => {
 };
 
 router.post('/', multer.single('image'), async (req, res) => {
-    const { isi, tanggal} = req.body;
+    const { title, content, date} = req.body;
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
-        const [result] = await pengumumanModel.create(isi, tanggal, imagePath);
-        res.status(201).json({ id: result.insertId, isi, tanggal, imagePath });
+        const [result] = await pengumumanModel.create(title, content, date, imagePath);
+        res.status(201).json({ id: result.insertId, title, content, date, imagePath });
     } catch (err) {
         res.status(500).json({ errorPengumumanRoutePo: err.message });
     }
@@ -55,7 +55,7 @@ router.post('/', multer.single('image'), async (req, res) => {
 
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    let { isi, tanggal } = req.body;
+    let { title, content, date } = req.body;
     const image = req.file;
     try {
         const [rows] = await pengumumanModel.findById(id);
@@ -63,8 +63,9 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             return res.status(404).json({ errorPengumumanRoutePa1: 'Pengumuman not found' });
         }
         const original = rows[0];
-        isi = isi ?? original.isi;
-        tanggal = tanggal ?? original.tanggal;
+        title = title ?? original.title;
+        content = content ?? original.content;
+        date = date ?? original.date;
         
         let imagepath = original.image_path;
         if (image) {
@@ -72,8 +73,8 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await pengumumanModel.update(id, isi ?? original.isi, tanggal ?? original.tanggal, imagepath);
-        res.json({ id, isi: isi ?? original.isi, tanggal: tanggal ?? original.tanggal, imagepath });
+        await pengumumanModel.update(id, title, content, date, imagepath);
+        res.json({ id, title, content, date, imagepath });
     } catch (err) {
         res.status(500).json({ errorPengumumanRoutePa2: err.message });
     }

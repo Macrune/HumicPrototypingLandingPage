@@ -29,12 +29,12 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', multer.single('logo'), async (req, res) => {
-    const { nama, deskripsi, link } = req.body;
+    const { name, description, link } = req.body;
     const logo = req.file;
     try {
         const logoPath = await uploadImage(logo);
-        const [result] = await partnerModel.create(nama, deskripsi, link, logoPath);
-        res.status(201).json({ id: result.insertId, nama, deskripsi, link, logoPath });
+        const [result] = await partnerModel.create(name, description, link, logoPath);
+        res.status(201).json({ id: result.insertId, name, description, link, logoPath });
     } catch (err) {
         res.status(500).json({ errorPartnerRoutePo: err.message });
     }
@@ -55,7 +55,7 @@ const uploadImage = async (image) => {
 
 router.patch('/:id', multer.single('logo'), async (req, res) => {
     const { id } = req.params;
-    let { nama, deskripsi, link } = req.body;
+    let { name, description, link } = req.body;
     const logo = req.file;
     try {
         const [rows] = await partnerModel.findById(id);
@@ -63,8 +63,8 @@ router.patch('/:id', multer.single('logo'), async (req, res) => {
             return res.status(404).json({ errorPartnerRoutePa1: 'Partner not found' });
         }
         const original = rows[0];
-        nama = nama ?? original.nama;
-        deskripsi = deskripsi ?? original.deskripsi;
+        name = name ?? original.name;
+        description = description ?? original.description;
         link = link ?? original.link;
 
         let logoPath = original.logo;
@@ -74,8 +74,8 @@ router.patch('/:id', multer.single('logo'), async (req, res) => {
             logoPath = await uploadImage(logo);
         }
 
-        const [result] = await partnerModel.update(id, nama, deskripsi, link, logoPath);
-        res.json({ id, nama, deskripsi, link, logoPath });
+        const [result] = await partnerModel.update(id, name, description, link, logoPath);
+        res.json({ id, name, description, link, logoPath });
     } catch (err) {
         res.status(500).json({ errorPartnerRoutePa2: err.message });
     }

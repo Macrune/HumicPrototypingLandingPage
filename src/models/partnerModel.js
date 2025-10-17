@@ -9,21 +9,21 @@ const partnerModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
-    create: (nama, deskripsi, link, logo) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (nama, deskripsi, link, logo) VALUES (?, ?, ?, ?)', 
+    create: (name, description, link, logo) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (name, description, link, logo) VALUES (?, ?, ?, ?)', 
             [
-                nama,
-                deskripsi,
+                name,
+                description,
                 link,
                 logo
             ]
         );
     },
-    update: (id, nama, deskripsi, link, logo) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET nama = ?, deskripsi = ?, link = ?, logo = ? WHERE id = ?',
+    update: (id, name, description, link, logo) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET name = ?, description = ?, link = ?, logo = ? WHERE id = ?',
             [
-                nama,
-                deskripsi,
+                name,
+                description,
                 link,
                 logo,
                 id

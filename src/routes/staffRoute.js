@@ -33,21 +33,20 @@ router.get('/:id', async (req, res) => {
 // Add a new staff member
 router.post('/', multer.single('image'), async (req, res) => {
     const {
-        nama,
-        posisi,
-        deskripsi,
-        edukasi,
-        publikasi,
+        name,
+        position,
+        description,
+        education,
+        publication,
         email,
-        kontak,
         linkedin,
         sosmed
     } = req.body;
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
-        const [result] = await staffModel.create( nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, imagePath );
-        res.status(201).json({ id: result.insertId, nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, imagePath });
+        const [result] = await staffModel.create( name, position, description, education, publication, email, linkedin, sosmed, imagePath );
+        res.status(201).json({ id: result.insertId, name, position, description, education, publication, email, linkedin, sosmed, imagePath });
     } catch (err) {
         res.status(500).json({ errorStaffRoutePo: err.message });
     }
@@ -69,7 +68,7 @@ const uploadImage = async (image) => {
 // Update a staff member by ID
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    let { nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, image_path } = req.body;
+    let { name, position, description, education, publication, email, linkedin, sosmed, image_path } = req.body;
     const image = req.file;
     try {
         const [rows] = await staffModel.findById(id);
@@ -79,13 +78,12 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
 
         // Use original values if any field is null or undefined
         const original = rows[0];
-        nama = nama ?? original.nama;
-        posisi = posisi ?? original.posisi;
-        deskripsi = deskripsi ?? original.deskripsi;
-        edukasi = edukasi ?? original.edukasi;
-        publikasi = publikasi ?? original.publikasi;
+        name = name ?? original.name;
+        position = position ?? original.position;
+        description = description ?? original.description;
+        education = education ?? original.education;
+        publication = publication ?? original.publication;
         email = email ?? original.email;
-        kontak = kontak ?? original.kontak;
         linkedin = linkedin ?? original.linkedin;
         sosmed = sosmed ?? original.sosmed;
 
@@ -97,9 +95,9 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
         }
 
         const [result] = await staffModel.update(
-            id, nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, imagepath
+            id, name, position, description, education, publication, email, linkedin, sosmed, imagepath
         );
-        res.json({ id, nama, posisi, deskripsi, edukasi, publikasi, email, kontak, linkedin, sosmed, image_path: imagepath });
+        res.json({ id, name, position, description, education, publication, email, linkedin, sosmed, image_path: imagepath });
     } catch (err) {
         res.status(500).json({ errorStaffRoutePa2: err.message });
     }

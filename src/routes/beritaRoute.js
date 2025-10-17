@@ -41,13 +41,13 @@ const uploadImage = async (image) => {
 };
 
 router.post('/', multer.single('image'), async (req, res) => {
-    const { judul, isi, tanggal } = req.body;
+    const { title, content, date } = req.body;
     const image = req.file;
     try {
         const imagePath = await uploadImage(image);
-        const penulis = req.body.penulis || 'Admin';
-        const [result] = await beritaModel.create(judul, tanggal, isi, penulis, imagePath);
-        res.status(201).json({ id: result.insertId, judul, tanggal, isi, penulis, imagePath });
+        const author = req.body.author || 'Admin';
+        const [result] = await beritaModel.create(title, content, author, date, imagePath);
+        res.status(201).json({ id: result.insertId, title, content, author, date, imagePath });
     } catch (err) {
         res.status(500).json({ errorBeritaRoutePo: err.message });
     }
@@ -55,7 +55,7 @@ router.post('/', multer.single('image'), async (req, res) => {
 
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    let { judul, isi, tanggal, penulis } = req.body;
+    let { title, content, date, author } = req.body;
     const image = req.file;
     try {
         const [rows] = await beritaModel.findById(id);
@@ -63,10 +63,10 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             return res.status(404).json({ errorBeritaRoutePa1: 'Berita not found' });
         }
         const original = rows[0];
-        judul = judul ?? original.judul;
-        isi = isi ?? original.isi;
-        tanggal = tanggal ?? original.tanggal;
-        penulis = penulis ?? original.penulis;
+        title = title ?? original.title;
+        content = content ?? original.content;
+        date = date ?? original.date;
+        author = author ?? original.author;
 
         let imagepath = original.image_path;
         if (image) {
@@ -74,8 +74,8 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await beritaModel.update(id, judul, tanggal, isi, penulis, imagepath);
-        res.json({ id, judul, tanggal, isi, penulis, imagepath });
+        await beritaModel.update(id, title, content, author, date, imagepath);
+        res.json({ id, title, content, author, date, imagepath });
     } catch (err) {
         res.status(500).json({ errorBeritaRoutePa2: err.message });
     }
