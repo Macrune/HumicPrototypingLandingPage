@@ -17,10 +17,10 @@ const staffModel = {
         publication,
         email,
         linkedin,
-        sosmed,
+        social_media,
         image_path
     ) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (name, position, description, education, publication, email, linkedin, sosmed, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (name, position, description, education, publication, email, linkedin, social_media, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
             [
                 name,
                 position,
@@ -29,7 +29,7 @@ const staffModel = {
                 publication,
                 email,
                 linkedin,
-                sosmed,
+                social_media,
                 image_path
             ]
         );
@@ -43,10 +43,10 @@ const staffModel = {
         publication,
         email,
         linkedin,
-        sosmed,
+        social_media,
         image_path
     ) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET name = ?, postion = ?, description = ?, education = ?, publication = ?, email = ?, linkedin = ?, sosmed = ?, image_path = ? WHERE id = ?', 
+        return db.query('UPDATE ' + TABLE_NAME + ' SET name = ?, position = ?, description = ?, education = ?, publication = ?, email = ?, linkedin = ?, social_media = ?, image_path = ? WHERE id = ?', 
             [
                 name,
                 position,
@@ -55,7 +55,7 @@ const staffModel = {
                 publication,
                 email,
                 linkedin,
-                sosmed,
+                social_media,
                 image_path,
                 id
             ]

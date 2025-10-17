@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         const [rows] = await newsModel.findAll();
         res.json(rows);
     } catch (err) {
-        res.status(500).json({ errorBeritaRouteGe: err.message });
+        res.status(500).json({ errorNewsRouteGe: err.message });
     }
 });
 
@@ -20,11 +20,11 @@ router.get('/:id', async (req, res) => {
     try {
         const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorBeritaRouteGI: 'Berita not found' });
+            return res.status(404).json({ errorNewsRouteGI: 'News not found' });
         }
         res.json(rows[0]);
     } catch (err) {
-        res.status(500).json({ errorBeritaRouteGI: err.message });
+        res.status(500).json({ errorNewsRouteGI: err.message });
     }
 });
 
@@ -33,7 +33,7 @@ const uploadImage = async (image) => {
         if (!image) {
             throw new Error('No image file provided');
         }
-        const filePath = `/img/${image.filename}`;
+        const filePath = `/${process.env.IMG_DIR}/${image.filename}`;
         return filePath;
     } catch (error) {
         throw new Error('Image upload failed: ' + error.message);
@@ -43,13 +43,18 @@ const uploadImage = async (image) => {
 router.post('/', multer.single('image'), async (req, res) => {
     const { title, content, date } = req.body;
     const image = req.file;
+    let imagePath = null;
     try {
-        const imagePath = await uploadImage(image);
+        imagePath = await uploadImage(image);
         const author = req.body.author || 'Admin';
         const [result] = await newsModel.create(title, content, author, date, imagePath);
-        res.status(201).json({ id: result.insertId, title, content, author, date, imagePath });
+        res.status(201).json({ id: result.insertId, title, content, author, date, image_path : imagePath });
     } catch (err) {
-        res.status(500).json({ errorBeritaRoutePo: err.message });
+        if (imagePath) {
+            const oldFile = path.basename(imagePath);
+            await fileHelper.deleteFile(oldFile);
+        }
+        res.status(500).json({ errorNewsRoutePo: err.message });
     }
 });
 
@@ -60,7 +65,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
     try {
         const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorBeritaRoutePa1: 'Berita not found' });
+            return res.status(404).json({ errorNewsRoutePa1: 'News not found' });
         }
         const original = rows[0];
         title = title ?? original.title;
@@ -75,9 +80,9 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             imagepath = await uploadImage(image);
         }
         await newsModel.update(id, title, content, author, date, imagepath);
-        res.json({ id, title, content, author, date, imagepath });
+        res.json({ id, title, content, author, date, image_path : imagepath });
     } catch (err) {
-        res.status(500).json({ errorBeritaRoutePa2: err.message });
+        res.status(500).json({ errorNewsRoutePa2: err.message });
     }
 });
 
@@ -86,7 +91,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
-            return res.status(404).json({ errorBeritaRouteDe1: 'Berita not found' });
+            return res.status(404).json({ errorNewsRouteDe1: 'News not found' });
         }
         const imagePath = rows[0].image_path;
         if (imagePath) {
@@ -94,9 +99,9 @@ router.delete('/:id', async (req, res) => {
             await fileHelper.deleteFile(oldFile);
         }
         await newsModel.delete(id);
-        res.json({ message: 'Berita deleted successfully' });
+        res.json({ message: 'News deleted successfully' });
     } catch (err) {
-        res.status(500).json({ errorBeritaRouteDe2: err.message });
+        res.status(500).json({ errorNewsRouteDe2: err.message });
     }
 });
 

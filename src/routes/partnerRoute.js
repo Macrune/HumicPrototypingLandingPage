@@ -31,11 +31,16 @@ router.get('/:id', async (req, res) => {
 router.post('/', multer.single('logo'), async (req, res) => {
     const { name, description, link } = req.body;
     const logo = req.file;
+    let logoPath = null;
     try {
-        const logoPath = await uploadImage(logo);
+        logoPath = await uploadImage(logo);
         const [result] = await partnerModel.create(name, description, link, logoPath);
-        res.status(201).json({ id: result.insertId, name, description, link, logoPath });
+        res.status(201).json({ id: result.insertId, name, description, link, logo : logoPath });
     } catch (err) {
+        if (logoPath) {
+            const oldFile = path.basename(logoPath);
+            await fileHelper.deleteFile(oldFile);
+        }
         res.status(500).json({ errorPartnerRoutePo: err.message });
     }
 });
@@ -46,7 +51,7 @@ const uploadImage = async (image) => {
             throw new Error('No image file provided');
         }
 
-        const filePath = `/img/${image.filename}`;
+        const filePath = `/${process.env.IMG_DIR}/${image.filename}`;
         return filePath;
     } catch (error) {
         throw new Error('Image upload failed: ' + error.message);
@@ -75,7 +80,7 @@ router.patch('/:id', multer.single('logo'), async (req, res) => {
         }
 
         const [result] = await partnerModel.update(id, name, description, link, logoPath);
-        res.json({ id, name, description, link, logoPath });
+        res.json({ id, name, description, link, logo : logoPath });
     } catch (err) {
         res.status(500).json({ errorPartnerRoutePa2: err.message });
     }

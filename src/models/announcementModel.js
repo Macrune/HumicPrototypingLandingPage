@@ -1,6 +1,6 @@
 const db = require('../config/db.js');
 
-const TABLE_NAME = 'pengumuman';
+const TABLE_NAME = 'announcement';
 
 const announcementModel = {
     findAll: () => {

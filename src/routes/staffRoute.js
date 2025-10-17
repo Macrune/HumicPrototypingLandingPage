@@ -40,14 +40,19 @@ router.post('/', multer.single('image'), async (req, res) => {
         publication,
         email,
         linkedin,
-        sosmed
+        social_media
     } = req.body;
     const image = req.file;
+    let imagePath = null;
     try {
-        const imagePath = await uploadImage(image);
-        const [result] = await staffModel.create( name, position, description, education, publication, email, linkedin, sosmed, imagePath );
-        res.status(201).json({ id: result.insertId, name, position, description, education, publication, email, linkedin, sosmed, imagePath });
+        imagePath = await uploadImage(image);
+        const [result] = await staffModel.create( name, position, description, education, publication, email, linkedin, social_media, imagePath );
+        res.status(201).json({ id: result.insertId, name, position, description, education, publication, email, linkedin, social_media, image_path : imagePath });
     } catch (err) {
+        if (imagePath) {
+            const oldFile = path.basename(imagePath);
+            await fileHelper.deleteFile(oldFile);
+        }
         res.status(500).json({ errorStaffRoutePo: err.message });
     }
 });
@@ -58,7 +63,7 @@ const uploadImage = async (image) => {
             throw new Error('No image file provided');
         }
 
-        const filePath = `/img/${image.filename}`;
+        const filePath = `/${process.env.IMG_DIR}/${image.filename}`;
         return filePath;
     } catch (error) {
         throw new Error('Image upload failed: ' + error.message);
@@ -68,7 +73,7 @@ const uploadImage = async (image) => {
 // Update a staff member by ID
 router.patch('/:id', multer.single('image'), async (req, res) => {
     const { id } = req.params;
-    let { name, position, description, education, publication, email, linkedin, sosmed, image_path } = req.body;
+    let { name, position, description, education, publication, email, linkedin, social_media, image_path } = req.body;
     const image = req.file;
     try {
         const [rows] = await staffModel.findById(id);
@@ -85,7 +90,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
         publication = publication ?? original.publication;
         email = email ?? original.email;
         linkedin = linkedin ?? original.linkedin;
-        sosmed = sosmed ?? original.sosmed;
+        social_media = social_media ?? original.social_media;
 
         let imagepath = original.image_path;
         if (image) {
@@ -95,9 +100,9 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
         }
 
         const [result] = await staffModel.update(
-            id, name, position, description, education, publication, email, linkedin, sosmed, imagepath
+            id, name, position, description, education, publication, email, linkedin, social_media, imagepath
         );
-        res.json({ id, name, position, description, education, publication, email, linkedin, sosmed, image_path: imagepath });
+        res.json({ id, name, position, description, education, publication, email, linkedin, social_media, image_path: imagepath });
     } catch (err) {
         res.status(500).json({ errorStaffRoutePa2: err.message });
     }

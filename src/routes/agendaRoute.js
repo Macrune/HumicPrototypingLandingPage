@@ -33,7 +33,7 @@ const uploadImage = async (image) => {
         if (!image) {
             throw new Error('No image file provided');
         }
-        const filePath = `/img/${image.filename}`;
+        const filePath = `/${process.env.IMG_DIR}/${image.filename}`;
         return filePath;
     } catch (error) {
         throw new Error('Image upload failed: ' + error.message);
@@ -43,11 +43,16 @@ const uploadImage = async (image) => {
 router.post('/', multer.single('image'), async (req, res) => {
     const { title, content, date } = req.body;
     const image = req.file;
+    let imagePath = null;
     try {
-        const imagePath = await uploadImage(image);
+        imagePath = await uploadImage(image);
         const [result] = await agendaModel.create(title, content, date, imagePath);
-        res.status(201).json({ id: result.insertId, title, content, date, imagePath });
+        res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
     } catch (err) {
+        if (imagePath) {
+            const oldFile = path.basename(imagePath);
+            await fileHelper.deleteFile(oldFile);
+        }
         res.status(500).json({ errorAgendaRoutePo: err.message });
     }
 });
@@ -70,7 +75,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             imagepath = await uploadImage(image);
         }
         await agendaModel.update(id, title ?? original.title, content ?? original.content, date ?? original.date, imagepath);
-        res.json({ id, title: title ?? original.title, content: content ?? original.content, date: date ?? original.date, imagepath });
+        res.json({ id, title: title ?? original.title, content: content ?? original.content, date: date ?? original.date, image_path : imagepath });
     } catch (err) {
         res.status(500).json({ errorAgendaRoutePa2: err.message });
     }

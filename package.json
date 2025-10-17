@@ -4,7 +4,8 @@
   "description": "Back End for Humic Prototyping Landing Page for Content Management System",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon ./src/server.js"
+    "devStart": "nodemon ./src/server.js",
+    "createDb": "node ./src/db_setup.js"
   },
   "repository": {
     "type": "git",
