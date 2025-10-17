@@ -1,5 +1,5 @@
 const express = require('express');
-const beritaModel = require('../models/beritaModel.js');
+const newsModel = require('../models/newsModel.js');
 const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await beritaModel.findAll();
+        const [rows] = await newsModel.findAll();
         res.json(rows);
     } catch (err) {
         res.status(500).json({ errorBeritaRouteGe: err.message });
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await beritaModel.findById(id);
+        const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
             return res.status(404).json({ errorBeritaRouteGI: 'Berita not found' });
         }
@@ -46,7 +46,7 @@ router.post('/', multer.single('image'), async (req, res) => {
     try {
         const imagePath = await uploadImage(image);
         const author = req.body.author || 'Admin';
-        const [result] = await beritaModel.create(title, content, author, date, imagePath);
+        const [result] = await newsModel.create(title, content, author, date, imagePath);
         res.status(201).json({ id: result.insertId, title, content, author, date, imagePath });
     } catch (err) {
         res.status(500).json({ errorBeritaRoutePo: err.message });
@@ -58,7 +58,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
     let { title, content, date, author } = req.body;
     const image = req.file;
     try {
-        const [rows] = await beritaModel.findById(id);
+        const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
             return res.status(404).json({ errorBeritaRoutePa1: 'Berita not found' });
         }
@@ -74,7 +74,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
             await fileHelper.deleteFile(oldFile);
             imagepath = await uploadImage(image);
         }
-        await beritaModel.update(id, title, content, author, date, imagepath);
+        await newsModel.update(id, title, content, author, date, imagepath);
         res.json({ id, title, content, author, date, imagepath });
     } catch (err) {
         res.status(500).json({ errorBeritaRoutePa2: err.message });
@@ -84,7 +84,7 @@ router.patch('/:id', multer.single('image'), async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await beritaModel.findById(id);
+        const [rows] = await newsModel.findById(id);
         if (rows.length === 0) {
             return res.status(404).json({ errorBeritaRouteDe1: 'Berita not found' });
         }
@@ -93,7 +93,7 @@ router.delete('/:id', async (req, res) => {
             const oldFile = path.basename(imagePath);
             await fileHelper.deleteFile(oldFile);
         }
-        await beritaModel.delete(id);
+        await newsModel.delete(id);
         res.json({ message: 'Berita deleted successfully' });
     } catch (err) {
         res.status(500).json({ errorBeritaRouteDe2: err.message });

@@ -2,7 +2,7 @@ const db = require('../config/db.js');
 
 const TABLE_NAME = 'berita';
 
-const beritaModel = {
+const newsModel = {
     findAll: () => {
         return db.query('SELECT * FROM ' + TABLE_NAME);
     },
@@ -28,4 +28,4 @@ const beritaModel = {
     }
 };
 
-module.exports = beritaModel;
+module.exports = newsModel;
