@@ -5,6 +5,8 @@ const partnerRouter = require('./routes/partnerRoute.js');
 const announcementRouter = require('./routes/announcementRoute.js');
 const agendaRouter = require('./routes/agendaRoute.js');
 const newsRouter = require('./routes/newsRoute.js');
+const internRouter = require('./routes/internRoute.js');
+const testimonyRouter = require('./routes/testimonyRoute.js');
 const path = require('path');
 
 dotenv.config();
@@ -19,6 +21,8 @@ app.use('/api/partners', partnerRouter);
 app.use('/api/pengumuman', announcementRouter);
 app.use('/api/agenda', agendaRouter);
 app.use('/api/berita', newsRouter);
+app.use('/api/intern', internRouter);
+app.use('/api/testimony', testimonyRouter);
 app.use('/img', express.static(path.join(__dirname, process.env.IMG_DIR || 'img')));
 
 app.listen(PORT, () => {
