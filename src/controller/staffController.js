@@ -1,8 +1,6 @@
 const staffModel = require('../models/staffModel.js');
-const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
-const { get } = require('http');
 
 const uploadImage = async (image) => {
     try {

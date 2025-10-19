@@ -1,5 +1,4 @@
 const newsModel = require('../models/newsModel.js');
-const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
 

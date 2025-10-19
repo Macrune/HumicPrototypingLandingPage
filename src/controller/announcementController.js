@@ -1,5 +1,4 @@
 const announcementModel = require('../models/announcementModel.js');
-const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
 

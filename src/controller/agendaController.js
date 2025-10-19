@@ -2,7 +2,6 @@ const agendaModel = require('../models/agendaModel.js');
 const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
-const { create } = require('domain');
 
 const uploadImage = async (image) => {
     try {

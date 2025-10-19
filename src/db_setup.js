@@ -101,6 +101,7 @@ connection.connect((err) => {
                 description TEXT,
                 publication TEXT,
                 link VARCHAR(255),
+                image_path VARCHAR(255),
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );

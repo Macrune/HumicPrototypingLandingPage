@@ -7,6 +7,7 @@ const agendaRouter = require('./routes/agendaRoute.js');
 const newsRouter = require('./routes/newsRoute.js');
 const internRouter = require('./routes/internRoute.js');
 const testimonyRouter = require('./routes/testimonyRoute.js');
+const categoryRouter = require('./routes/categoryRoute.js');
 const path = require('path');
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/api/agenda', agendaRouter);
 app.use('/api/berita', newsRouter);
 app.use('/api/intern', internRouter);
 app.use('/api/testimony', testimonyRouter);
+app.use('/api/category', categoryRouter);
 app.use('/img', express.static(path.join(__dirname, process.env.IMG_DIR || 'img')));
 
 app.listen(PORT, () => {

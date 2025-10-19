@@ -32,12 +32,16 @@ const testimonyController = {
     },
     updateTestimony: async (req, res) => {
         const { id } = req.params;
-        const { id_intern, content } = req.body;
+        let { id_intern, content } = req.body;
         try {
-            const [result] = await testimonyModel.update(id, id_intern, content);
-            if (result.affectedRows === 0) {
+            const [rows] = await testimonyModel.findById(id);
+            if (rows.affectedRows === 0) {
                 return res.status(404).json({ errorTestimonyRoutePa: 'Testimony not found' });
             }
+            const original = rows[0];
+            id_intern = id_intern ?? original.id_intern;
+            content = content ?? original.content;
+            await testimonyModel.update(id, id_intern, content);
             res.json({ id, id_intern, content });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePa: err.message });
