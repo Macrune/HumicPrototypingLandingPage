@@ -116,12 +116,14 @@ const staffController = {
             if (rows.length === 0) {
                 return res.status(404).json({ errorStaffRouteDe1: 'Staff member not found' });
             }
+
+            const [result] = await staffModel.delete(id);
             const imagePath = rows[0].image_path;
             if (imagePath) {
                 const fileName = path.basename(imagePath);
                 await fileHelper.deleteFile(fileName);
             }
-            const [result] = await staffModel.delete(id);
+            
             res.json({ message: 'Staff member deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorStaffRouteDe2: err.message });

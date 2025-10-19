@@ -94,13 +94,13 @@ const announcementController = {
                 return res.status(404).json({ errorAnnouncementRouteDe1: 'Announcement not found' });
             }
 
+            await announcementModel.delete(id);
             let imagepath = rows[0].image_path;
             if (imagepath) {
                 const oldFile = path.basename(imagepath);
                 await fileHelper.deleteFile(oldFile);
             }
 
-            await announcementModel.delete(id);
             res.json({ message: 'Announcement deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAnnouncementRouteDe2: err.message });

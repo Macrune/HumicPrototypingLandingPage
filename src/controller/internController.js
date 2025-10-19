@@ -100,12 +100,14 @@ const internController = {
             if (rows.length === 0) {
                 return res.status(404).json({ errorInternRouteDe1: 'Intern not found' });
             }
+
+            const [result] = await internModel.delete(id);
             const imagePath = rows[0].image_path;
             if (imagePath) {
                 const fileName = path.basename(imagePath);
                 await fileHelper.deleteFile(fileName);
             }
-            const [result] = await internModel.delete(id);
+            
             res.json({ message: 'Intern deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorInternRouteDe2: err.message });

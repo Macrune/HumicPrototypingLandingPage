@@ -1,5 +1,4 @@
 const agendaModel = require('../models/agendaModel.js');
-const multer = require('../middleware/multer.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
 
@@ -89,12 +88,14 @@ const agendaController = {
             if (rows.length === 0) {
                 return res.status(404).json({ errorAgendaRouteDe1: 'Agenda not found' });
             }
+            
+            const [result] = await agendaModel.delete(id);
             let imagepath = rows[0].image_path;
             if (imagepath) {
                 const oldFile = path.basename(imagepath);
                 await fileHelper.deleteFile(oldFile);
             }
-            const [result] = await agendaModel.delete(id);
+            
             res.json({ message: 'Agenda deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAgendaRouteDe2: err.message });

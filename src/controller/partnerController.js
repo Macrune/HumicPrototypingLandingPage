@@ -95,13 +95,13 @@ const partnerController = {
                 return res.status(404).json({ errorPartnerRouteDe1: 'Partner not found' });
             }
 
+            const [result] = await partnerModel.delete(id);
             const imagePath = rows[0].logo;
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
                 await fileHelper.deleteFile(oldFile);
             }
-
-            const [result] = await partnerModel.delete(id);
+            
             res.json({ message: 'Partner deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorPartnerRouteDe2: err.message });

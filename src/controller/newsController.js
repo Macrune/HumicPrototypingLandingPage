@@ -94,12 +94,14 @@ const newsController = {
             if (rows.length === 0) {
                 return res.status(404).json({ errorNewsRouteDe1: 'News not found' });
             }
+
+            await newsModel.delete(id);
             const imagePath = rows[0].image_path;
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
                 await fileHelper.deleteFile(oldFile);
             }
-            await newsModel.delete(id);
+            
             res.json({ message: 'News deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorNewsRouteDe2: err.message });

@@ -8,7 +8,7 @@ const categoryModel = {
         return db.query('SELECT * FROM ' + TABLE_NAME);
     },
     findById: (id) => {
-        return db.query('SELECT * FROM ' + TABLE_NAME + 'WHERE id = ?', [id]);
+        return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
     create: (name) => {
         return db.query('INSERT INTO ' + TABLE_NAME + ' (name) VALUES (?)', [name]);
@@ -17,7 +17,7 @@ const categoryModel = {
         return db.query('UPDATE ' + TABLE_NAME + ' SET name = ? WHERE id = ?', [name, id]);
     },
     delete: async (id) => {
-        return db.query('DELETE FROM ' + TABLE_NAME + 'WHERE id = ?', [id]);
+        return db.query('DELETE FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     }
 };
 
