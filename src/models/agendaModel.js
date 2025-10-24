@@ -6,6 +6,16 @@ const agendaModel = {
     findAll: () => {
         return db.query('SELECT * FROM ' + TABLE_NAME);
     },
+    fidAllSorted: (order = 'DESC', limit) => {
+        const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+        limit = parseInt(limit, 10) ;
+        let SQLQuery = 'SELECT title, content, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
+
+        if (!isNaN(limit) && limit > 0) {
+            SQLQuery += ' LIMIT ' + limit;
+        }
+        return db.query(SQLQuery);
+    },
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },

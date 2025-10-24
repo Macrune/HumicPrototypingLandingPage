@@ -128,6 +128,7 @@ connection.connect((err) => {
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 id_intern BIGINT NOT NULL,
                 content TEXT,
+                rating TINYINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
                 INDEX idx_testimony_intern (id_intern),
                 CONSTRAINT fk_testimony_intern
                     FOREIGN KEY (id_intern) REFERENCES intern(id) ON DELETE CASCADE,

@@ -36,13 +36,13 @@ const internController = {
         }
     },
     createIntern: async (req, res) => {
-        const { name, role, university, major, email, contact, linkedin, social_media, start_date, end_date } = req.body;
+        const { name, role, university, major, email, contact, linkedin, social_media } = req.body;
         const image = req.file;
         let imagePath = null;
         try {
             imagePath = await uploadImage(image);
-            const [result] = await internModel.create(name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, imagePath);
-            res.status(201).json({ id: result.insertId, name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path : imagePath });
+            const [result] = await internModel.create(name, role, university, major, email, contact, linkedin, social_media, imagePath);
+            res.status(201).json({ id: result.insertId, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
@@ -53,7 +53,7 @@ const internController = {
     },
     updateIntern: async (req, res) => {
         const { id } = req.params;
-        let { name, role, university, major, email, contact, linkedin, social_media, start_date, end_date } = req.body;
+        let { name, role, university, major, email, contact, linkedin, social_media } = req.body;
         const image = req.file;
         try {
             const [rows] = await internModel.findById(id);
@@ -74,8 +74,6 @@ const internController = {
             contact = contact ?? original.contact;
             linkedin = linkedin ?? original.linkedin;
             social_media = social_media ?? original.social_media;
-            start_date = start_date ?? original.start_date;
-            end_date = end_date ?? original.end_date;
 
             let imagePath = original.image_path;
             if (image) {
@@ -83,8 +81,8 @@ const internController = {
                 await fileHelper.deleteFile(oldFile);
                 imagePath = await uploadImage(image);
             }
-            await internModel.update(id, name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, imagePath);
-            res.json({ id, name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path : imagePath });
+            await internModel.update(id, name, role, university, major, email, contact, linkedin, social_media, imagePath);
+            res.json({ id, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (image) {
                 const tempImage = await uploadImage(image);

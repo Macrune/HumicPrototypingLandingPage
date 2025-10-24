@@ -16,11 +16,12 @@ const uploadImage = async (image) => {
 
 const agendaController = {
     getAllAgendas: async (req, res) => {
+        const { order = 'DESC', limit } = req.query;
         try {
-            const [rows] = await agendaModel.findAll();
+            const [rows] = await agendaModel.fidAllSorted(order, limit);
             res.json(rows);
         } catch (err) {
-            res.status(500).json({ errorAgendaRouteGe: err.message });
+            res.status(500).json({ errorAgendaRouteGS: err.message });
         }
     },
     getAgendaById: async (req, res) => {

@@ -12,7 +12,8 @@ const testimonyModel = {
             i.name,
             i.role,
             i.university,
-            t.content
+            t.content,
+            t.rating
             FROM ${TESTIMONY_TABLE} t
             JOIN 
                 ${INTERN_TABLE} i on t.id_intern = i.id
@@ -27,7 +28,8 @@ const testimonyModel = {
             i.name,
             i.role,
             i.university,
-            t.content
+            t.content,
+            t.rating
             FROM ${TESTIMONY_TABLE} t
             JOIN 
                 ${INTERN_TABLE} i on t.id_intern = i.id
@@ -36,17 +38,17 @@ const testimonyModel = {
         `;
         return db.query(SQLQuery);
     },
-    create: (id_intern, content) => {
-        return db.query('INSERT INTO ' + TESTIMONY_TABLE + ' (id_intern, content) VALUES (?, ?)', 
+    create: (id_intern, content, rating) => {
+        return db.query('INSERT INTO ' + TESTIMONY_TABLE + ' (id_intern, content, rating) VALUES (?, ?)', 
             [
-                id_intern, content
+                id_intern, content, rating
             ]
         );
     },
-    update: (id, id_intern, content) => {
+    update: (id, id_intern, content, rating) => {
         return db.query('UPDATE ' + TESTIMONY_TABLE + ' SET id_intern = ?, content = ? WHERE id = ?',
             [
-                id_intern, content, id
+                id_intern, content, rating, id
             ]
         );
     },

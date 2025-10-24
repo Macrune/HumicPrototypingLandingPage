@@ -9,17 +9,17 @@ const internModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
-    create: (name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+    create: (name, role, university, major, email, contact, linkedin, social_media, image_path) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (name, role, university, major, email, contact, linkedin, social_media, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
             [
-                name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path
+                name, role, university, major, email, contact, linkedin, social_media, image_path
             ]
         );
     },
-    update: (id, name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET name = ?, role = ?, university = ?, major = ?, email = ?, contact = ?, linkedin = ?, social_media = ?, start_date = ?, end_date = ?, image_path = ? WHERE id = ?',
+    update: (id, name, role, university, major, email, contact, linkedin, social_media, image_path) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET name = ?, role = ?, university = ?, major = ?, email = ?, contact = ?, linkedin = ?, social_media = ?, image_path = ? WHERE id = ?',
             [
-                name, role, university, major, email, contact, linkedin, social_media, start_date, end_date, image_path, id
+                name, role, university, major, email, contact, linkedin, social_media, image_path, id
             ]
         );
     },

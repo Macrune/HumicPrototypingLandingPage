@@ -17,11 +17,12 @@ const uploadImage = async (image) => {
 
 const announcementController = {
     getAllAnnouncements: async (req, res) => {
+        const { order = 'DESC', limit } = req.query;
         try {
-            const [rows] = await announcementModel.findAll();
+            const [rows] = await announcementModel.fidAllSorted(order, limit);
             res.json(rows);
         } catch (err) {
-            res.status(500).json({ errorAnnouncementRouteGe: err.message });
+            res.status(500).json({ errorAnnouncementRouteGS: err.message });
         }
     },
     getAnnouncementById: async (req, res) => {

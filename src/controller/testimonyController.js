@@ -22,17 +22,17 @@ const testimonyController = {
         }
     },
     createTestimony: async (req, res) => {
-        const { id_intern, content } = req.body;
+        const { id_intern, content, rating } = req.body;
         try {
-            const [result] = await testimonyModel.create(id_intern, content);
-            res.status(201).json({ id: result.insertId, id_intern, content });
+            const [result] = await testimonyModel.create(id_intern, content, rating);
+            res.status(201).json({ id: result.insertId, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePo: err.message });
         }
     },
     updateTestimony: async (req, res) => {
         const { id } = req.params;
-        let { id_intern, content } = req.body;
+        let { id_intern, content, rating } = req.body;
         try {
             const [rows] = await testimonyModel.findById(id);
             if (rows.affectedRows === 0) {
@@ -41,8 +41,9 @@ const testimonyController = {
             const original = rows[0];
             id_intern = id_intern ?? original.id_intern;
             content = content ?? original.content;
-            await testimonyModel.update(id, id_intern, content);
-            res.json({ id, id_intern, content });
+            rating = rating ?? original.rating;
+            await testimonyModel.update(id, id_intern, content, rating);
+            res.json({ id, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePa: err.message });
         }

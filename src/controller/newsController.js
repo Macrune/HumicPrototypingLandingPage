@@ -16,11 +16,12 @@ const uploadImage = async (image) => {
 
 const newsController = {
     getAllNews: async (req, res) => {
+         const { order = 'DESC', limit } = req.query;
         try {
-            const [rows] = await newsModel.findAll();
+            const [rows] = await newsModel.fidAllSorted(order, limit);
             res.json(rows);
         } catch (err) {
-            res.status(500).json({ errorNewsRouteGe: err.message });
+            res.status(500).json({ errorNewsRouteGS: err.message });
         }
     },
     getNewsById: async (req, res) => {
