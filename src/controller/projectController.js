@@ -4,6 +4,7 @@ const projectMemberModel = require('../models/projectMemberModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
 
+
 const uploadImage = async (image) => {
     try {
         if (!image) {
@@ -18,6 +19,7 @@ const uploadImage = async (image) => {
 
 const projectController = {
     getAllProject: async (req, res) => {
+        console.log("GET ALL PROJECT");
         try {
             const [rows] = await projectModel.findAll();
             res.json(rows);
@@ -42,6 +44,18 @@ const projectController = {
 
         } catch (err) {
             res.status(500).json({ errorProjectRouteGI: err.message });
+        }
+    },
+    getProjectBySearch: async (req, res) => {
+        const { que } = req.query;
+        try {
+            const [rows] = await projectModel.findBySearch(que);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorProjectRouteGS: 'No projects found matching the search criteria' });
+            }
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ errorProjectRouteGS: err.message });
         }
     },
     createProject: async (req, res) => {
