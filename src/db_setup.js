@@ -148,6 +148,24 @@ connection.connect((err) => {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );
+            CREATE TABLE admin (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(100) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                last_login DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+            CREATE TABLE logs (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                id_admin BIGINT NOT NULL,
+                action VARCHAR(255) NOT NULL,
+                target_table VARCHAR(255),
+                target_id BIGINT,
+                description TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE CASCADE
+            );
             `; 
 
             connection.query(createTables, (err, result) => {

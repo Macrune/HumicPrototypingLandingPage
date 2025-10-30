@@ -11,6 +11,7 @@ const categoryRouter = require('./routes/categoryRoute.js');
 const projectRoute = require('./routes/projectRoute.js');
 const projectCategoryConstroller = require('./routes/projectCategoryRoute.js');
 const projectMemberController = require('./routes/projectMemberRoute.js');
+const adminRouter = require('./routes/adminRoute.js');
 const path = require('path');
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/category', categoryRouter);
 app.use('/api/project', projectRoute);
 app.use('/api/project_category', projectCategoryConstroller);
 app.use('/api/project_member', projectMemberController);
+app.use('/api/admin', adminRouter);
 app.use('/img', express.static(path.join(__dirname, process.env.IMG_DIR || 'img')));
 
 app.listen(PORT, () => {

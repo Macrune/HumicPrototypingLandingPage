@@ -9,7 +9,7 @@ const agendaModel = {
     fidAllSorted: (order = 'DESC', limit) => {
         const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
         limit = parseInt(limit, 10) ;
-        let SQLQuery = 'SELECT id, title, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
+        let SQLQuery = 'SELECT id, title, content, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
 
         if (!isNaN(limit) && limit > 0) {
             SQLQuery += ' LIMIT ' + limit;
