@@ -1,5 +1,4 @@
 const db = require('../config/db.js');
-const { findById, create } = require('./agendaModel.js');
 
 const TABLE_NAME = 'category';
 
@@ -11,7 +10,7 @@ const categoryModel = {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
     create: (name) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (name) VALUES (?)', [name]);
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (name) VALUES (?) ON DUPLICATE KEY UPDATE name = VALUES(name);', [name]);
     },
     update: (id, name) => {
         return db.query('UPDATE ' + TABLE_NAME + ' SET name = ? WHERE id = ?', [name, id]);

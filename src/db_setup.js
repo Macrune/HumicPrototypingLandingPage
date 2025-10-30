@@ -167,7 +167,13 @@ connection.connect((err) => {
                 FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE SET NULL
             );
 
-            INSERT INTO 'category' ('id', 'name', 'created_at', 'updated_at') VALUES ('1', 'Internship', current_timestamp(), current_timestamp()), ('2', 'Researchship', current_timestamp(), current_timestamp())
+            INSERT INTO admin (username, password_hash)
+                VALUES ('admin', '$2b$10$weSjUS67T/jO0sGVQenAjuTOFLgqRS4FGf/CcJvIZM.wbSBBNznra');
+            INSERT INTO category (name)
+                VALUES 
+                ('Internship'),
+                ('Researchship')
+                ON DUPLICATE KEY UPDATE name = VALUES(name);
             `; 
 
             connection.query(createTables, (err, result) => {
