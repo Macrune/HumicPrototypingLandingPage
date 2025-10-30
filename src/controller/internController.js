@@ -1,6 +1,7 @@
 const internModel = require('../models/internModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 const uploadImage = async (image) => {
     try {
@@ -42,6 +43,8 @@ const internController = {
         try {
             imagePath = await uploadImage(image);
             const [result] = await internModel.create(name, role, university, major, email, contact, linkedin, social_media, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'intern', result.insertId, `Created intern with name: ${name}`);
             res.status(201).json({ id: result.insertId, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -82,6 +85,8 @@ const internController = {
                 imagePath = await uploadImage(image);
             }
             await internModel.update(id, name, role, university, major, email, contact, linkedin, social_media, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'intern', id, `Updated intern with name: ${name}`);
             res.json({ id, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (image) {
@@ -105,7 +110,8 @@ const internController = {
                 const fileName = path.basename(imagePath);
                 await fileHelper.deleteFile(fileName);
             }
-            
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'intern', id, `Updated intern with name: ${result[0].name}`);
             res.json({ message: 'Intern deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorInternRouteDe2: err.message });

@@ -158,13 +158,13 @@ connection.connect((err) => {
             );
             CREATE TABLE logs (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                id_admin BIGINT NOT NULL,
+                id_admin BIGINT,
                 action VARCHAR(255) NOT NULL,
                 target_table VARCHAR(255),
                 target_id BIGINT,
                 description TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE CASCADE
+                FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE SET NULL
             );
             `; 
 

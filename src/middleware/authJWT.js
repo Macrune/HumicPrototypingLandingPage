@@ -16,7 +16,7 @@ const authJWT = (req, res, next) => {
         if (err) {
             return res.status(401).json({ errorAuthJWT3: 'Invalid or Expired Token' });
         }
-        req.user = decoded;
+        req.admin = decoded;
         next();
     });
 };

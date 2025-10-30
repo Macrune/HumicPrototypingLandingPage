@@ -14,6 +14,9 @@ const projectMemberModel = {
     delete: async (id) => {
         return db.query('DELETE FROM ' + PROJECT_MEMBER_TABLE + ' WHERE id = ?', [id]);
     },
+    findById: (id) => {
+        return db.query('SELECT * FROM ' + PROJECT_MEMBER_TABLE + ' WHERE id = ?', [id]);
+    },
     getMemberByProject: (id_project) => {
         const SQLQuery = `
         SELECT

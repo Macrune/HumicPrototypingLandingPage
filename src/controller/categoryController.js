@@ -1,4 +1,5 @@
 const categoryModel = require('../models/categoryModel');
+const { createLog } = require('../models/logsModel.js');
 
 const categoryController = {
     getAllCategorys: async (req, res) => {
@@ -25,6 +26,8 @@ const categoryController = {
         const { name } = req.body;
         try {
             const [result] = await categoryModel.create(name);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'category', result.insertId, `Created category with name: ${name}`);
             res.status(201).json({ id: result.insertId, name});
         } catch (err) {
             res.status(500).json({ errorCategoryRoutePo: err.message })
@@ -41,6 +44,8 @@ const categoryController = {
             const original = rows[0];
             name = name ?? original.name;
             await categoryModel.update(id, name);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'category', id, `Change category with id: ${id} to name: ${name}`);
             res.json({ id, name });
         } catch (err) {
             res.status(500).json({ errorCategoryRoutePa: err.message })
@@ -53,6 +58,9 @@ const categoryController = {
             if (result.affectedRows === 0) {
                 return res.status(404).json({ errorCategoryRouteDe1: 'Category not found' });
             }
+
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'category', id, `Deleted category with name: ${result[0].name}`);
             res.json({ message: 'Category deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorCategoryRouteDe: err.message })

@@ -1,6 +1,7 @@
 const newsModel = require('../models/newsModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 const uploadImage = async (image) => {
     try {
@@ -44,6 +45,8 @@ const newsController = {
             imagePath = await uploadImage(image);
             const author = req.body.author || 'Admin';
             const [result] = await newsModel.create(title, content, author, date, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'news', result.insertId, `Created news with title: ${title}`);
             res.status(201).json({ id: result.insertId, title, content, author, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -79,6 +82,8 @@ const newsController = {
                 imagepath = await uploadImage(image);
             }
             await newsModel.update(id, title, content, author, date, imagepath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'news', id, `Updated news with title: ${title}`);
             res.json({ id, title, content, author, date, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -103,6 +108,8 @@ const newsController = {
                 await fileHelper.deleteFile(oldFile);
             }
             
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'news', id, `Deleted news with title: ${rows[0].title}`);
             res.json({ message: 'News deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorNewsRouteDe2: err.message });

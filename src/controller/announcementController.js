@@ -1,6 +1,7 @@
 const announcementModel = require('../models/announcementModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 const uploadImage = async (image) => {
     try {
@@ -44,6 +45,8 @@ const announcementController = {
         try {
             imagePath = await uploadImage(image);
             const [result] = await announcementModel.create(title, content, date, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'announcement', result.insertId, `Created announcement with id: ${result.insertId}`);
             res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -78,6 +81,8 @@ const announcementController = {
                 imagepath = await uploadImage(image);
             }
             await announcementModel.update(id, title, content, date, imagepath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'announcement', id, `Updated announcement with id: ${id}`);
             res.json({ id, title, content, date, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -102,6 +107,8 @@ const announcementController = {
                 await fileHelper.deleteFile(oldFile);
             }
 
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'announcement', id, `Deleted announcement with id: ${id}`);
             res.json({ message: 'Announcement deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAnnouncementRouteDe2: err.message });

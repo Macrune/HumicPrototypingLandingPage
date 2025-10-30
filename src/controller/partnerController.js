@@ -1,6 +1,7 @@
 const partnerModel = require('../models/partnerModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 const uploadImage = async (image) => {
     try {
@@ -43,6 +44,8 @@ const partnerController = {
         try {
             logoPath = await uploadImage(logo);
             const [result] = await partnerModel.create(name, description, link, logoPath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'partner', result.insertId, `Created partner with name: ${name}`);
             res.status(201).json({ id: result.insertId, name, description, link, logo : logoPath });
         } catch (err) {
             if (logoPath) {
@@ -78,6 +81,8 @@ const partnerController = {
             }
 
             const [result] = await partnerModel.update(id, name, description, link, logoPath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'partner', id, `Updated partner with name: ${name}`);
             res.json({ id, name, description, link, logo : logoPath });
         } catch (err) {
             if (logo) {
@@ -102,6 +107,8 @@ const partnerController = {
                 await fileHelper.deleteFile(oldFile);
             }
             
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'partner', id, `Deleted partner with name: ${rows[0].name}`);
             res.json({ message: 'Partner deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorPartnerRouteDe2: err.message });

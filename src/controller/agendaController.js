@@ -1,6 +1,7 @@
 const agendaModel = require('../models/agendaModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 const uploadImage = async (image) => {
     try {
@@ -43,6 +44,8 @@ const agendaController = {
         try {
             imagePath = await uploadImage(image);
             const [result] = await agendaModel.create(title, content, date, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'agenda', result.insertId, `Created agenda with title: ${title}`);
             res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -73,6 +76,8 @@ const agendaController = {
                 imagepath = await uploadImage(image);
             }
             await agendaModel.update(id, title ?? original.title, content ?? original.content, date ?? original.date, imagepath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'agenda', id, `Updated agenda with title: ${title ?? original.title}`);
             res.json({ id, title: title ?? original.title, content: content ?? original.content, date: date ?? original.date, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -97,6 +102,8 @@ const agendaController = {
                 await fileHelper.deleteFile(oldFile);
             }
             
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'agenda', id, `Deleted agenda with title: ${rows[0].title}`);
             res.json({ message: 'Agenda deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAgendaRouteDe2: err.message });

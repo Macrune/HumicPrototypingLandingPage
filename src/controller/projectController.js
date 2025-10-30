@@ -3,6 +3,7 @@ const projectCategoryModel = require('../models/projectCategoryModel.js');
 const projectMemberModel = require('../models/projectMemberModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const { createLog } = require('../models/logsModel.js');
 
 
 const uploadImage = async (image) => {
@@ -66,6 +67,8 @@ const projectController = {
         try {
             imagePath = await uploadImage(image);
             const [result] = await projectModel.create(title, description, publication, link, imagePath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'project', result.insertId, `Created project with title: ${title}`);
             res.status(201).json({ id: result.insertId, title, description, publication, link, image_path : imagePath});
         } catch (err) {
             if (imagePath) {
@@ -103,6 +106,8 @@ const projectController = {
             }
 
             await projectModel.update(id, title, description, publication, link, imagepath);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'project', id, `Updated project with title: ${title}`);
             res.json({ id, title, description, publication, link, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -125,6 +130,9 @@ const projectController = {
                 const oldFile = path.basename(imagepath);
                 await fileHelper.deleteFile(oldFile);
             }
+
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'project', id, `Deleted project with title: ${rows[0].title}`);
             res.json({ message: 'Project deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorProjectRouteDe: err.message });

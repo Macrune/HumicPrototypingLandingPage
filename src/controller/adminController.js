@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const adminModel = require('../models/adminModel.js');
+const { createLog } = require('../models/logsModel.js');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
@@ -61,6 +62,8 @@ const adminController = {
 
             const password_hash = await bcrypt.hash(password, 10);
             const [result] = await adminModel.create(username, password_hash);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'admin', result.insertId, `Created admin with username: ${username}`);
             res.status(201).json({ id: result.insertId, username });
         } catch (err) {
             res.status(500).json({ errorAdminRouteCA2: err.message });
@@ -82,6 +85,8 @@ const adminController = {
                 password = await bcrypt.hash(password, 10);
             }
             await adminModel.update(id, username, password);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'admin', result.insertId, `Updated admin with username: ${username}`);
             res.json({ id, username });
         } catch (err) {
             res.status(500).json({ errorAdminRouteUA2: err.message });
@@ -95,6 +100,8 @@ const adminController = {
                 return res.status(404).json({ errorAdminRouteDA: 'Admin not found' });
             }
             await adminModel.delete(id);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'admin', id, `Deleted admin with username: ${rows[0].username}`);
             res.json({ message: 'Admin deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAdminRouteDA2: err.message });
@@ -108,8 +115,11 @@ const adminController = {
             if (rows.length === 0) {
                 return res.status(404).json({ errorAdminRouteRP: 'Admin not found' });
             }
+            console.log(rows[0].username)
             const password_hash = await bcrypt.hash(new_password, 10);
             await adminModel.updatePassword(id, password_hash);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'admin', id, `Reset Password for admin with username: ${rows[0].username}`);
             res.json({ message: 'Password reset successfully' });
         } catch (err) {
             res.status(500).json({ errorAdminRouteRP2: err.message });

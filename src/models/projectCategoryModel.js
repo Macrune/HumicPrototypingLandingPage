@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { findById } = require('./agendaModel');
 
 const PROJECT_CATEGORY_TABLE = 'project_category';
 const CATEGORY_TABLE = 'category';
@@ -13,6 +14,9 @@ const projectCategoryModel = {
     },
     delete: async (id) => {
         return db.query('DELETE FROM ' + PROJECT_CATEGORY_TABLE + ' WHERE id = ?', [id])
+    },
+    findById: (id) => {
+        return db.query('SELECT * FROM ' + PROJECT_CATEGORY_TABLE + ' WHERE id = ?', [id]);
     },
     getCategoryByProject: (id_project) => {
         const SQLQuery = `

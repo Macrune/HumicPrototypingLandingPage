@@ -1,4 +1,5 @@
 const testimonyModel = require('../models/testimonyModel.js');
+const { createLog } = require('../models/logsModel.js');
 
 const testimonyController = {
     getAllTestimonies: async (req, res) => {
@@ -25,6 +26,8 @@ const testimonyController = {
         const { id_intern, content, rating } = req.body;
         try {
             const [result] = await testimonyModel.create(id_intern, content, rating);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'CREATE', 'testimony', result.insertId, `Created testimony with id: ${result.insertId}`);
             res.status(201).json({ id: result.insertId, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePo: err.message });
@@ -43,6 +46,8 @@ const testimonyController = {
             content = content ?? original.content;
             rating = rating ?? original.rating;
             await testimonyModel.update(id, id_intern, content, rating);
+            const adminId = req.admin.id;
+            await createLog(adminId, 'UPDATE', 'testimony', id, `Updated testimony with id: ${id}`);
             res.json({ id, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePa: err.message });
@@ -55,6 +60,9 @@ const testimonyController = {
             if (result.affectedRows === 0) {
                 return res.status(404).json({ errorTestimonyRouteDe: 'Testimony not found' });
             }
+
+            const adminId = req.admin.id;
+            await createLog(adminId, 'DELETE', 'testimony', id, `Deleted testimony with id: ${id}`);
             res.json({ message: 'Testimony deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorTestimonyRouteDe: err.message });
