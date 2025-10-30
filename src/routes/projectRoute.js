@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get('/', projectController.getAllProject);
 router.get('/search', projectController.getProjectBySearch); // Use query que=? for search term
+router.get('/search/internship', projectController.getProjectBySearchInternship); // Use query que=? for search term
+router.get('/search/researchship', projectController.getProjectBySearchResearchship); // Use query que=? for search term
 router.get('/:id', projectController.getProjectById);
 router.post('/', authJWT, multer.single('image'), convertToWebP, projectController.createProject);
 router.patch('/:id', authJWT, multer.single('image'), convertToWebP, projectController.updateProject);

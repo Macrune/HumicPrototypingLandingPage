@@ -166,6 +166,8 @@ connection.connect((err) => {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE SET NULL
             );
+
+            INSERT INTO 'category' ('id', 'name', 'created_at', 'updated_at') VALUES ('1', 'Internship', current_timestamp(), current_timestamp()), ('2', 'Researchship', current_timestamp(), current_timestamp())
             `; 
 
             connection.query(createTables, (err, result) => {

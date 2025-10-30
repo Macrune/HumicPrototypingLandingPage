@@ -59,6 +59,30 @@ const projectController = {
             res.status(500).json({ errorProjectRouteGS: err.message });
         }
     },
+    getProjectBySearchInternship: async (req, res) => {
+        const { que } = req.query;
+        try {
+            const [rows] = await projectModel.findBySearchInternship(que);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorProjectRouteGSI: 'No internship projects found matching the search criteria' });
+            }
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ errorProjectRouteGSI: err.message });
+        }
+    },
+    getProjectBySearchResearchship: async (req, res) => {
+        const { que } = req.query;
+        try {
+            const [rows] = await projectModel.findBySearchResearchship(que);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorProjectRouteGSI: 'No internship projects found matching the search criteria' });
+            }
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ errorProjectRouteGSI: err.message });
+        }
+    },
     createProject: async (req, res) => {
         const { title, description, publication, link } = req.body;
         const image = req.file;
