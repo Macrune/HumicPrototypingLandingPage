@@ -45,7 +45,7 @@ const agendaController = {
             imagePath = await uploadImage(image);
             const [result] = await agendaModel.create(title, content, date, imagePath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'agenda', result.insertId, `Created agenda with title: ${title}`);
+            await createLog(adminId, 'CREATE', 'agenda', result.insertId, `${req.admin.username} Created agenda with title: ${title}`);
             res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -77,7 +77,7 @@ const agendaController = {
             }
             await agendaModel.update(id, title ?? original.title, content ?? original.content, date ?? original.date, imagepath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'agenda', id, `Updated agenda with title: ${title ?? original.title}`);
+            await createLog(adminId, 'UPDATE', 'agenda', id, `${req.admin.username} Updated agenda with title: ${title ?? original.title}`);
             res.json({ id, title: title ?? original.title, content: content ?? original.content, date: date ?? original.date, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -103,7 +103,7 @@ const agendaController = {
             }
             
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'agenda', id, `Deleted agenda with title: ${rows[0].title}`);
+            await createLog(adminId, 'DELETE', 'agenda', id, `${req.admin.username} Deleted agenda with title: ${rows[0].title}`);
             res.json({ message: 'Agenda deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAgendaRouteDe2: err.message });

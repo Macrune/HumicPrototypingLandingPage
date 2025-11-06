@@ -7,7 +7,7 @@ const authJWT = (req, res, next) => {
         return res.status(401).json({ errorAuthJWT: 'No token provided' });
     }
 
-    const token = authHeader;
+    const token = authHeader.split(' ')[1];
     if (!token) {
         return res.status(401).json({ errorAuthJWT2: 'Token Missing' });
     }

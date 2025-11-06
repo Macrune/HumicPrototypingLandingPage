@@ -27,7 +27,7 @@ const categoryController = {
         try {
             const [result] = await categoryModel.create(name);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'category', result.insertId, `Created category with name: ${name}`);
+            await createLog(adminId, 'CREATE', 'category', result.insertId, `${req.admin.username} Created category with name: ${name}`);
             res.status(201).json({ id: result.insertId, name});
         } catch (err) {
             res.status(500).json({ errorCategoryRoutePo: err.message })
@@ -45,7 +45,7 @@ const categoryController = {
             name = name ?? original.name;
             await categoryModel.update(id, name);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'category', id, `Change category with id: ${id} to name: ${name}`);
+            await createLog(adminId, 'UPDATE', 'category', id, `${req.admin.username} Change category with id: ${id} to name: ${name}`);
             res.json({ id, name });
         } catch (err) {
             res.status(500).json({ errorCategoryRoutePa: err.message })
@@ -60,7 +60,7 @@ const categoryController = {
             }
 
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'category', id, `Deleted category with name: ${result[0].name}`);
+            await createLog(adminId, 'DELETE', 'category', id, `${req.admin.username} Deleted category with name: ${result[0].name}`);
             res.json({ message: 'Category deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorCategoryRouteDe: err.message })

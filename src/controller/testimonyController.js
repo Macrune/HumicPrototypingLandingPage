@@ -27,7 +27,7 @@ const testimonyController = {
         try {
             const [result] = await testimonyModel.create(id_intern, content, rating);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'testimony', result.insertId, `Created testimony with id: ${result.insertId}`);
+            await createLog(adminId, 'CREATE', 'testimony', result.insertId, `${req.admin.username} Created testimony with id: ${result.insertId}`);
             res.status(201).json({ id: result.insertId, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePo: err.message });
@@ -47,7 +47,7 @@ const testimonyController = {
             rating = rating ?? original.rating;
             await testimonyModel.update(id, id_intern, content, rating);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'testimony', id, `Updated testimony with id: ${id}`);
+            await createLog(adminId, 'UPDATE', 'testimony', id, `${req.admin.username} Updated testimony with id: ${id}`);
             res.json({ id, id_intern, content, rating });
         } catch (err) {
             res.status(500).json({ errorTestimonyRoutePa: err.message });
@@ -62,7 +62,7 @@ const testimonyController = {
             }
 
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'testimony', id, `Deleted testimony with id: ${id}`);
+            await createLog(adminId, 'DELETE', 'testimony', id, `${req.admin.username} Deleted testimony with id: ${id}`);
             res.json({ message: 'Testimony deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorTestimonyRouteDe: err.message });

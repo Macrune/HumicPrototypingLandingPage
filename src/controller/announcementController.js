@@ -46,7 +46,7 @@ const announcementController = {
             imagePath = await uploadImage(image);
             const [result] = await announcementModel.create(title, content, date, imagePath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'announcement', result.insertId, `Created announcement with id: ${result.insertId}`);
+            await createLog(adminId, 'CREATE', 'announcement', result.insertId, `${req.admin.username} Created announcement with id: ${result.insertId}`);
             res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -82,7 +82,7 @@ const announcementController = {
             }
             await announcementModel.update(id, title, content, date, imagepath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'announcement', id, `Updated announcement with id: ${id}`);
+            await createLog(adminId, 'UPDATE', 'announcement', id, `${req.admin.username} Updated announcement with id: ${id}`);
             res.json({ id, title, content, date, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -108,7 +108,7 @@ const announcementController = {
             }
 
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'announcement', id, `Deleted announcement with id: ${id}`);
+            await createLog(adminId, 'DELETE', 'announcement', id, `${req.admin.username} Deleted announcement with id: ${id}`);
             res.json({ message: 'Announcement deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAnnouncementRouteDe2: err.message });

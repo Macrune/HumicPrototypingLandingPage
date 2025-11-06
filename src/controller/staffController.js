@@ -56,7 +56,7 @@ const staffController = {
             imagePath = await uploadImage(image);
             const [result] = await staffModel.create( name, position, description, education, publication, email, linkedin, social_media, imagePath );
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'staff', result.insertId, `Created staff member with name: ${name}`);
+            await createLog(adminId, 'CREATE', 'staff', result.insertId, `${req.admin.username} Created staff member with name: ${name}`);
             res.status(201).json({ id: result.insertId, name, position, description, education, publication, email, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -103,7 +103,7 @@ const staffController = {
                 id, name, position, description, education, publication, email, linkedin, social_media, imagepath
             );
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'staff', id, `Updated staff member with name: ${name}`);
+            await createLog(adminId, 'UPDATE', 'staff', id, `${req.admin.username} Updated staff member with name: ${name}`);
             res.json({ id, name, position, description, education, publication, email, linkedin, social_media, image_path: imagepath });
         } catch (err) {
             if (image) {
@@ -130,7 +130,7 @@ const staffController = {
             }
             
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'staff', id, `Deleted staff member with name: ${rows[0].name}`);
+            await createLog(adminId, 'DELETE', 'staff', id, `${req.admin.username} Deleted staff member with name: ${rows[0].name}`);
             res.json({ message: 'Staff member deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorStaffRouteDe2: err.message });

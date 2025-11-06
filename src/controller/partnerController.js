@@ -45,7 +45,7 @@ const partnerController = {
             logoPath = await uploadImage(logo);
             const [result] = await partnerModel.create(name, description, link, logoPath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'partner', result.insertId, `Created partner with name: ${name}`);
+            await createLog(adminId, 'CREATE', 'partner', result.insertId, `${req.admin.username} Created partner with name: ${name}`);
             res.status(201).json({ id: result.insertId, name, description, link, logo : logoPath });
         } catch (err) {
             if (logoPath) {
@@ -82,7 +82,7 @@ const partnerController = {
 
             const [result] = await partnerModel.update(id, name, description, link, logoPath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'partner', id, `Updated partner with name: ${name}`);
+            await createLog(adminId, 'UPDATE', 'partner', id, `${req.admin.username} Updated partner with name: ${name}`);
             res.json({ id, name, description, link, logo : logoPath });
         } catch (err) {
             if (logo) {
@@ -108,7 +108,7 @@ const partnerController = {
             }
             
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'partner', id, `Deleted partner with name: ${rows[0].name}`);
+            await createLog(adminId, 'DELETE', 'partner', id, `${req.admin.username} Deleted partner with name: ${rows[0].name}`);
             res.json({ message: 'Partner deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorPartnerRouteDe2: err.message });

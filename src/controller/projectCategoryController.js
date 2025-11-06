@@ -11,7 +11,7 @@ const projectCategoryConstroller = {
             const [projects] = await projectModel.findById(id_project);
             const [categories] = await categoryModel.findById(id_category);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'project_category', result.insertId, `Created project category with project title: ${projects[0].title} and category name: ${categories[0].name}`);
+            await createLog(adminId, 'CREATE', 'project_category', result.insertId, `${req.admin.username} Created project category with project title: ${projects[0].title} and category name: ${categories[0].name}`);
             res.status(201).json({ id: result.insertId, id_project, id_category});
         } catch (err) {
             res.status(500).json({ errorProjectCategoryRoutePo: err.message });
@@ -28,7 +28,7 @@ const projectCategoryConstroller = {
             const [projects] = await projectModel.findById(rows[0].id_project);
             const [categories] = await categoryModel.findById(rows[0].id_category);
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'project_category', id, `Deleted category ${categories[0].name} from  project ${projects[0].title}`);
+            await createLog(adminId, 'DELETE', 'project_category', id, `${req.admin.username} Deleted category ${categories[0].name} from  project ${projects[0].title}`);
             res.json({ message : 'Project Category deleted successfully'});
         } catch (err) {
             res.status(500).json({ errorProjectCategoryRouteDe: err.message });

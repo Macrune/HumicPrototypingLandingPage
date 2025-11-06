@@ -26,7 +26,7 @@ const adminController = {
 
             adminModel.updateLastLogin(admin.id);
 
-            const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+            const token = jwt.sign({ id: admin.id, username: admin.username, role : admin.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
             res.json({ message: 'Login Successful', token, admin: { id: admin.id, username: admin.username } });
         } catch (err) {
             res.status(500).json({ errorAdminRouteL4: err.message });
@@ -54,7 +54,12 @@ const adminController = {
     },
     createAdmin: async (req, res) => {
         const { username, password } = req.body;
+        const adminRole = req.admin.role;
+        console.log('Requested role:', adminRole);
         try {
+            if (adminRole && req.admin.role !== 'Master Admin') {
+                return res.status(403).json({ errorAdminRouteCA: 'Only Master Admin can create admin' });
+            }
             const existingAdmin = await adminModel.findByUsername(username);
             if (existingAdmin[0].length > 0) {
                 return res.status(400).json({ errorAdminRouteCA: 'Username already exists' });
@@ -63,7 +68,7 @@ const adminController = {
             const password_hash = await bcrypt.hash(password, 10);
             const [result] = await adminModel.create(username, password_hash);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'admin', result.insertId, `Created admin with username: ${username}`);
+            await createLog(adminId, 'CREATE', 'admin', result.insertId, `${req.admin.username} Created admin with username: ${username}`);
             res.status(201).json({ id: result.insertId, username });
         } catch (err) {
             res.status(500).json({ errorAdminRouteCA2: err.message });
@@ -72,7 +77,11 @@ const adminController = {
     updateAdmin: async (req, res) => {
         const { id } = req.params;
         let { username, password } = req.body;
+        const adminRole = req.admin.role;
         try {
+            if (adminRole && req.admin.role !== 'Master Admin') {
+                return res.status(403).json({ errorAdminRouteCA: 'Only Master Admin can update admin' });
+            }
             const [rows] = await adminModel.findById(id);
             if (rows.length === 0) {
                 return res.status(404).json({ errorAdminRouteUA: 'Admin not found' });
@@ -86,7 +95,7 @@ const adminController = {
             }
             await adminModel.update(id, username, password);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'admin', result.insertId, `Updated admin with username: ${username}`);
+            await createLog(adminId, 'UPDATE', 'admin', id, `${req.admin.username} Updated admin with username: ${username}`);
             res.json({ id, username });
         } catch (err) {
             res.status(500).json({ errorAdminRouteUA2: err.message });
@@ -94,14 +103,18 @@ const adminController = {
     },
     deleteAdmin: async (req, res) => {
         const { id } = req.params;
+        const adminRole = req.admin.role;
         try {
+            if (adminRole && req.admin.role !== 'Master Admin') {
+                return res.status(403).json({ errorAdminRouteCA: 'Only Master Admin can delete admin' });
+            }
             const [rows] = await adminModel.findById(id);
             if (rows.length === 0) {
                 return res.status(404).json({ errorAdminRouteDA: 'Admin not found' });
             }
             await adminModel.delete(id);
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'admin', id, `Deleted admin with username: ${rows[0].username}`);
+            await createLog(adminId, 'DELETE', 'admin', id, `${req.admin.username} Deleted admin with username: ${rows[0].username}`);
             res.json({ message: 'Admin deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorAdminRouteDA2: err.message });
@@ -110,16 +123,19 @@ const adminController = {
     resetPassword: async (req, res) => {
         const { id } = req.params;
         const { new_password } = req.body;
+        const adminRole = req.admin.role;
         try {
+            if (adminRole && req.admin.role !== 'Master Admin') {
+                return res.status(403).json({ errorAdminRouteCA: 'Only Master Admin can reset password' });
+            }
             const [rows] = await adminModel.findById(id);
             if (rows.length === 0) {
                 return res.status(404).json({ errorAdminRouteRP: 'Admin not found' });
             }
-            console.log(rows[0].username)
             const password_hash = await bcrypt.hash(new_password, 10);
             await adminModel.updatePassword(id, password_hash);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'admin', id, `Reset Password for admin with username: ${rows[0].username}`);
+            await createLog(adminId, 'UPDATE', 'admin', id, `${req.admin.username} Reset Password for admin with username: ${rows[0].username}`);
             res.json({ message: 'Password reset successfully' });
         } catch (err) {
             res.status(500).json({ errorAdminRouteRP2: err.message });

@@ -44,7 +44,7 @@ const internController = {
             imagePath = await uploadImage(image);
             const [result] = await internModel.create(name, role, university, major, email, contact, linkedin, social_media, imagePath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'intern', result.insertId, `Created intern with name: ${name}`);
+            await createLog(adminId, 'CREATE', 'intern', result.insertId, `${req.admin.username} Created intern with name: ${name}`);
             res.status(201).json({ id: result.insertId, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
@@ -86,7 +86,7 @@ const internController = {
             }
             await internModel.update(id, name, role, university, major, email, contact, linkedin, social_media, imagePath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'intern', id, `Updated intern with name: ${name}`);
+            await createLog(adminId, 'UPDATE', 'intern', id, `${req.admin.username} Updated intern with name: ${name}`);
             res.json({ id, name, role, university, major, email, contact, linkedin, social_media, image_path : imagePath });
         } catch (err) {
             if (image) {
@@ -111,7 +111,7 @@ const internController = {
                 await fileHelper.deleteFile(fileName);
             }
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'intern', id, `Updated intern with name: ${result[0].name}`);
+            await createLog(adminId, 'UPDATE', 'intern', id, `${req.admin.username} Updated intern with name: ${result[0].name}`);
             res.json({ message: 'Intern deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorInternRouteDe2: err.message });

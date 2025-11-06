@@ -11,7 +11,7 @@ const projectMemberController = {
             const [projects] = await projectModel.findById(id_project);
             const [interns] = await internModel.findById(id_intern);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'project_member', result.insertId, `Added intern ${interns[0].name} to project ${projects[0].title}`);
+            await createLog(adminId, 'CREATE', 'project_member', result.insertId, `${req.admin.username} Added intern ${interns[0].name} to project ${projects[0].title}`);
             res.status(201).json({ id: result.insertId, id_project, id_intern});
         } catch (err) {
             res.status(500).json({ errorProjectMemberRoutePo: err.message });
@@ -28,7 +28,7 @@ const projectMemberController = {
             const [projects] = await projectModel.findById(rows[0].id_project);
             const [interns] = await internModel.findById(rows[0].id_intern);
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'project_member', id, `Removed intern ${interns[0].name} from project ${projects[0].title}`);
+            await createLog(adminId, 'DELETE', 'project_member', id, `${req.admin.username} Removed intern ${interns[0].name} from project ${projects[0].title}`);
             res.json({ message : 'Project Member deleted successfully'})
         } catch (err) {
             res.status(500).json({ errorProjectMemberRouteDe: err.message })

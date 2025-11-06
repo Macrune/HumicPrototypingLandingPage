@@ -92,7 +92,7 @@ const projectController = {
             imagePath = await uploadImage(image);
             const [result] = await projectModel.create(title, description, publication, link, imagePath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'CREATE', 'project', result.insertId, `Created project with title: ${title}`);
+            await createLog(adminId, 'CREATE', 'project', result.insertId, `${req.admin.username} Created project with title: ${title}`);
             res.status(201).json({ id: result.insertId, title, description, publication, link, image_path : imagePath});
         } catch (err) {
             if (imagePath) {
@@ -131,7 +131,7 @@ const projectController = {
 
             await projectModel.update(id, title, description, publication, link, imagepath);
             const adminId = req.admin.id;
-            await createLog(adminId, 'UPDATE', 'project', id, `Updated project with title: ${title}`);
+            await createLog(adminId, 'UPDATE', 'project', id, `${req.admin.username} Updated project with title: ${title}`);
             res.json({ id, title, description, publication, link, image_path : imagepath });
         } catch (err) {
             if (image) {
@@ -156,7 +156,7 @@ const projectController = {
             }
 
             const adminId = req.admin.id;
-            await createLog(adminId, 'DELETE', 'project', id, `Deleted project with title: ${rows[0].title}`);
+            await createLog(adminId, 'DELETE', 'project', id, `${req.admin.username} Deleted project with title: ${rows[0].title}`);
             res.json({ message: 'Project deleted successfully' });
         } catch (err) {
             res.status(500).json({ errorProjectRouteDe: err.message });

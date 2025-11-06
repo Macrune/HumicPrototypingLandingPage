@@ -89,8 +89,6 @@ connection.connect((err) => {
                 contact VARCHAR(50),
                 linkedin VARCHAR(255),
                 social_media VARCHAR(255),
-                start_date DATE,
-                end_date DATE,
                 image_path VARCHAR(255),
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -152,6 +150,7 @@ connection.connect((err) => {
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(100) NOT NULL UNIQUE,
                 password_hash VARCHAR(255) NOT NULL,
+                role ENUM('Master Admin', 'Admin') NOT NULL,
                 last_login DATETIME,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -167,8 +166,8 @@ connection.connect((err) => {
                 FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE SET NULL
             );
 
-            INSERT INTO admin (username, password_hash)
-                VALUES ('admin', '$2b$10$weSjUS67T/jO0sGVQenAjuTOFLgqRS4FGf/CcJvIZM.wbSBBNznra');
+            INSERT INTO admin (username, password_hash, role)
+                VALUES ('master admin', '$2b$10$weSjUS67T/jO0sGVQenAjuTOFLgqRS4FGf/CcJvIZM.wbSBBNznra', 'Master Admin');
             INSERT INTO category (name)
                 VALUES 
                 ('Internship'),
