@@ -166,6 +166,13 @@ connection.connect((err) => {
                 FOREIGN KEY (id_admin) REFERENCES admin(id) ON DELETE SET NULL
             );
 
+            CREATE TABLE banner (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                image_path VARCHAR(255),
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+
             INSERT INTO admin (username, password_hash, role)
                 VALUES ('master admin', '$2b$10$weSjUS67T/jO0sGVQenAjuTOFLgqRS4FGf/CcJvIZM.wbSBBNznra', 'Master Admin');
             INSERT INTO category (name)
