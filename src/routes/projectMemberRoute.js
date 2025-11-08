@@ -44,7 +44,7 @@ const router = express.Router();
  *      tags: [Project Member]
  *      security:
  *        - bearerAuth: []
- *      requrestBody:
+ *      requestBody:
  *        required: true
  *        content:
  *          application/json:

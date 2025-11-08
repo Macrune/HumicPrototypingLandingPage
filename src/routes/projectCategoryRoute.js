@@ -44,7 +44,7 @@ const router = express.Router();
  *      tags: [Project Category]
  *      security:
  *        - bearerAuth: []
- *      requrestBody:
+ *      requestBody:
  *        required: true
  *        content:
  *          application/json:
@@ -52,11 +52,11 @@ const router = express.Router();
  *              type: object
  *              properties:
  *                id_project:
- *                  type: string
+ *                  type: integer
  *                  description: The id of the project that has the category
  *                  example: 1
  *                id_category:
- *                  type: string
+ *                  type: integer
  *                  description: The category id used on the project
  *                  example: 3
  *      required:
