@@ -25,7 +25,6 @@ const testimonyController = {
     createTestimony: async (req, res) => {
         const { id_intern, content, rating } = req.body;
         try {
-            console.log("TEST")
             const [result] = await testimonyModel.create(id_intern, content, rating);
             
             const adminId = req.admin.id;
