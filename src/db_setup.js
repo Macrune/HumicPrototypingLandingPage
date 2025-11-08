@@ -150,7 +150,7 @@ connection.connect((err) => {
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(100) NOT NULL UNIQUE,
                 password_hash VARCHAR(255) NOT NULL,
-                role ENUM('Master Admin', 'Admin') NOT NULL,
+                role ENUM('Master Admin', 'Admin') NOT NULL DEFAULT 'Admin',
                 last_login DATETIME,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
