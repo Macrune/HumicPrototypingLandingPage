@@ -39,7 +39,7 @@ const testimonyModel = {
         return db.query(SQLQuery);
     },
     create: (id_intern, content, rating) => {
-        return db.query('INSERT INTO ' + TESTIMONY_TABLE + ' (id_intern, content, rating) VALUES (?, ?)', 
+        return db.query('INSERT INTO ' + TESTIMONY_TABLE + ' (id_intern, content, rating) VALUES (?, ?, ?)', 
             [
                 id_intern, content, rating
             ]
