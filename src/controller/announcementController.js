@@ -1,7 +1,9 @@
 const announcementModel = require('../models/announcementModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const slug = require('../config/slug.js');
 const { createLog } = require('../models/logsModel.js');
+const { get } = require('http');
 
 const uploadImage = async (image) => {
     try {
@@ -38,6 +40,18 @@ const announcementController = {
             res.status(500).json({ errorAnnouncementRouteGI: err.message });
         }
     },
+    getAnnouncementBySlug: async (req, res) => {
+        const { slug } = req.params;
+        try {
+            const [rows] = await announcementModel.findBySlug(slug);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorAnnouncementRouteGS: 'Announcement not found' });
+            }
+            res.json(rows[0]);
+        } catch (err) {
+            res.status(500).json({ errorAnnouncementRouteGS: err.message });
+        }
+    },
     createAnnouncement: async (req, res) => {
         const { title, content, date} = req.body;
         const image = req.file;
@@ -48,10 +62,11 @@ const announcementController = {
             }else {
                 imagePath = null;
             }
-            const [result] = await announcementModel.create(title, content, date, imagePath);
+            const slugTitle = await slug(title, 'announcement');
+            const [result] = await announcementModel.create(title, slugTitle, content, date, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'announcement', result.insertId, `${req.admin.username} Created announcement with id: ${result.insertId}`);
-            res.status(201).json({ id: result.insertId, title, content, date, image_path : imagePath });
+            res.status(201).json({ id: result.insertId, title, slug: slugTitle, content, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
@@ -88,10 +103,11 @@ const announcementController = {
                     imagepath = await uploadImage(image);
                 }
             }
-            await announcementModel.update(id, title, content, date, imagepath);
+            const slugTitle = await slug(title, 'announcement');
+            await announcementModel.update(id, title, slugTitle, content, date, imagepath);
             const adminId = req.admin.id;
             await createLog(adminId, 'UPDATE', 'announcement', id, `${req.admin.username} Updated announcement with id: ${id}`);
-            res.json({ id, title, content, date, image_path : imagepath });
+            res.json({ id, title, slug: slugTitle, content, date, image_path : imagepath });
         } catch (err) {
             if (image) {
                 const tempImage = await uploadImage(image);

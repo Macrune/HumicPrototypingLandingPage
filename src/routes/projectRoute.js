@@ -26,6 +26,9 @@ const router = express.Router();
  *            title:
  *              type: string
  *              description: The title of the project
+ *            slug:
+ *              type: string
+ *              description: The slug of the project
  *            description:
  *              type: string
  *              description: Description of what the project is
@@ -44,6 +47,7 @@ const router = express.Router();
  *          example:
  *            id: 1
  *            title: HUMIC Prototyping Landing Page
+ *            slug: humic-prototyping-landing-page
  *            description: Internship project of creating a landing page for all humic project
  *            publication: Publication example
  *            link: www.humicprototyping.com
@@ -174,6 +178,33 @@ router.get('/search/researchship', projectController.getProjectBySearchResearchs
  *          description: Server error
  */
 router.get('/:id', projectController.getProjectById);
+
+/**
+ * @swagger
+ * /api/project/slug/{slug}:
+ *  get:
+ *      summary: Retrieve a project by slug
+ *      tags: [Project]
+ *      parameters:
+ *        - in: path
+ *          name: slug
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: The project slug
+ *      responses:
+ *        200:
+ *          description: A list of project
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Project'
+ *        404:
+ *          description: Project not found
+ *        500:
+ *          description: Server error
+ */
+router.get('/slug/:slug', projectController.getProjectBySlug);
 
 /**
  * @swagger

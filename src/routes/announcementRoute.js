@@ -26,6 +26,9 @@ const router = express.Router();
  *            title:
  *              type: string
  *              description: The title of the announcement
+ *            slug:
+ *              type: string
+ *              description: The slug of the announcement
  *            content:
  *              type: string
  *              description: The content/details of the announcement
@@ -43,6 +46,7 @@ const router = express.Router();
  *          example:
  *            id: 1
  *            title: "New Internship Program"
+ *            slug: "new-internship-program"
  *            content: "We are excited to announce our new internship program starting this summer."
  *            date: "2023-12-01"
  *            image_url: "/img/announcement1.webp"
@@ -107,6 +111,33 @@ router.get('/', announcementController.getAllAnnouncements); // Handle ?sort and
  *          description: Server error
  */
 router.get('/:id', announcementController.getAnnouncementById);
+
+/**
+ * @swagger
+ * /api/pengumuman/slug/{slug}:
+ *  get:
+ *      summary: Retrieve an announcement by slug
+ *      tags: [Announcements]
+ *      parameters:
+ *        - in: path
+ *          name: slug
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: The announcement slug
+ *      responses:
+ *        200:
+ *          description: Announcement data
+ *          content:
+ *              application/json:
+ *                schema:
+ *                  $ref: '#/components/schemas/Announcement'
+ *        404:
+ *          description: Announcement not found
+ *        500:
+ *          description: Server error
+ */
+router.get('/slug/:slug', announcementController.getAnnouncementBySlug);
 
 /**
  * @swagger

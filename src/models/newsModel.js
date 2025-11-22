@@ -9,7 +9,7 @@ const newsModel = {
     fidAllSorted: (order = 'DESC', limit) => {
         const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
         limit = parseInt(limit, 10) ;
-        let SQLQuery = 'SELECT id, title, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
+        let SQLQuery = 'SELECT id, slug, title, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
 
         if (!isNaN(limit) && limit > 0) {
             SQLQuery += ' LIMIT ' + limit;
@@ -19,17 +19,20 @@ const newsModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
-    create: (title, content, author, date, image_path) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (title, content, author, date, image_path) VALUES (?, ?, ?, ?, ?)', 
+    findBySlug: (slug) => {
+        return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE slug = ?', [slug]);
+    },
+    create: (title, slug, content, author, date, image_path) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (title, slug, content, author, date, image_path) VALUES (?, ?, ?, ?, ?, ?)', 
             [
-                title, content, author, date, image_path
+                title, slug, content, author, date, image_path
             ]
         );
     },
-    update: (id, title, content, author, date, image_path) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET title = ?, content = ?, author = ?, date = ?, image_path = ? WHERE id = ?',
+    update: (id, title, slug, content, author, date, image_path) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET title = ?, slug = ?, content = ?, author = ?, date = ?, image_path = ? WHERE id = ?',
             [
-                title, content, author, date, image_path, id
+                title, slug, content, author, date, image_path, id
             ]
         );
     },

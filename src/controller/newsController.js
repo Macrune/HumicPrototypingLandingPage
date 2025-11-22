@@ -1,7 +1,9 @@
 const newsModel = require('../models/newsModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const slug = require('../config/slug.js');
 const { createLog } = require('../models/logsModel.js');
+const { get } = require('http');
 
 const uploadImage = async (image) => {
     try {
@@ -37,6 +39,18 @@ const newsController = {
             res.status(500).json({ errorNewsRouteGI: err.message });
         }
     },
+    getNewsBySlug: async (req, res) => {
+        const { slug } = req.params;
+        try {
+            const [rows] = await newsModel.findBySlug(slug);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorNewsRouteGS: 'News not found' });
+            }
+            res.json(rows[0]);
+        } catch (err) {
+            res.status(500).json({ errorNewsRouteGS: err.message });
+        }
+    },
     createNews: async (req, res) => {
         const { title, content, date } = req.body;
         const image = req.file;
@@ -48,10 +62,11 @@ const newsController = {
                 imagePath = null;
             }
             const author = req.body.author || 'Admin';
-            const [result] = await newsModel.create(title, content, author, date, imagePath);
+            const slugTitle = await slug(title, 'news');
+            const [result] = await newsModel.create(title, slugTitle, content, author, date, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'news', result.insertId, `${req.admin.username} Created news with title: ${title}`);
-            res.status(201).json({ id: result.insertId, title, content, author, date, image_path : imagePath });
+            res.status(201).json({ id: result.insertId, title, slug: slugTitle, content, author, date, image_path : imagePath });
         } catch (err) {
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
@@ -89,10 +104,11 @@ const newsController = {
                     imagepath = await uploadImage(image);
                 }
             }
-            await newsModel.update(id, title, content, author, date, imagepath);
+            const slugTitle = await slug(title, 'news');
+            await newsModel.update(id, title, slugTitle, content, author, date, imagepath);
             const adminId = req.admin.id;
             await createLog(adminId, 'UPDATE', 'news', id, `${req.admin.username} Updated news with title: ${title}`);
-            res.json({ id, title, content, author, date, image_path : imagepath });
+            res.json({ id, title, slug: slugTitle, content, author, date, image_path : imagepath });
         } catch (err) {
             if (image) {
                 const tempImage = await uploadImage(image);

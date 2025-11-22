@@ -3,7 +3,9 @@ const projectCategoryModel = require('../models/projectCategoryModel.js');
 const projectMemberModel = require('../models/projectMemberModel.js');
 const fileHelper = require('../config/fileHelper.js');
 const path = require('path');
+const slug = require('../config/slug.js');
 const { createLog } = require('../models/logsModel.js');
+
 
 
 const uploadImage = async (image) => {
@@ -38,6 +40,25 @@ const projectController = {
 
             const [member] = await projectMemberModel.getMemberByProject(id);
             const [category] = await projectCategoryModel.getCategoryByProject(id);
+
+            rows[0].member = member;
+            rows[0].category = category;
+            res.json(rows[0]);
+
+        } catch (err) {
+            res.status(500).json({ errorProjectRouteGI: err.message });
+        }
+    },
+    getProjectBySlug: async (req, res) => {
+        const { slug } = req.params;
+        try {
+            const [rows] = await projectModel.findBySlug(slug);
+            if (rows.length === 0) {
+                return res.status(404).json({ errorProjectRouteGI: 'Project not found' });
+            }
+
+            const [member] = await projectMemberModel.getMemberByProject(rows[0].id);
+            const [category] = await projectCategoryModel.getCategoryByProject(rows[0].id);
 
             rows[0].member = member;
             rows[0].category = category;
@@ -94,10 +115,12 @@ const projectController = {
             } else {
                 imagePath = null;
             }
-            const [result] = await projectModel.create(title, description, publication, link, imagePath);
+
+            const slugTitle = await slug(title, 'project');
+            const [result] = await projectModel.create(title, slugTitle, description, publication, link, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'project', result.insertId, `${req.admin.username} Created project with title: ${title}`);
-            res.status(201).json({ id: result.insertId, title, description, publication, link, image_path : imagePath});
+            res.status(201).json({ id: result.insertId, title, slug: slugTitle, description, publication, link, image_path : imagePath});
         } catch (err) {
             if (imagePath) {
                 const oldFile = path.basename(imagePath);
@@ -136,11 +159,11 @@ const projectController = {
                     imagepath = await uploadImage(image);
                 }
             }
-
-            await projectModel.update(id, title, description, publication, link, imagepath);
+            const slugTitle = await slug(title, 'project');
+            await projectModel.update(id, title, slugTitle, description, publication, link, imagepath);
             const adminId = req.admin.id;
             await createLog(adminId, 'UPDATE', 'project', id, `${req.admin.username} Updated project with title: ${title}`);
-            res.json({ id, title, description, publication, link, image_path : imagepath });
+            res.json({ id, title, slug: slugTitle, description, publication, link, image_path : imagepath });
         } catch (err) {
             if (image) {
                 const tempImage = await uploadImage(image);

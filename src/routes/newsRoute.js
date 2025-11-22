@@ -26,6 +26,9 @@ const router = express.Router();
  *          title:
  *            type: string
  *            description: The title of the news
+ *          slug:
+ *            type: string
+ *            description: The slug of the news
  *          content:
  *            type: string
  *            description: The content/details of the news
@@ -47,6 +50,7 @@ const router = express.Router();
  *        example:
  *          id: 1
  *          title: "Major News of new Internship"
+ *          slug: "major-news-of-new-internship"
  *          content: "Lorem ipsum dolor sit amet"
  *          author: "John Doe"
  *          date: "2023-11-15"
@@ -112,6 +116,33 @@ router.get('/', newsController.getAllNews);
  *          description: Server error
  */
 router.get('/:id', newsController.getNewsById);
+
+/**
+ * @swagger
+ * /api/berita/slug/{slug}:
+ *  get:
+ *      summary: Retreive a news by slug
+ *      tags: [News]
+ *      parameters:
+ *        - in: path
+ *          name: slug
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: The news slug
+ *      responses:
+ *        200:
+ *          description: News data
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/News'
+ *        404:
+ *          description: News not found
+ *        500:
+ *          description: Server error
+ */
+router.get('/slug/:slug', newsController.getNewsBySlug);
 
 /**
  * @swagger

@@ -1,5 +1,4 @@
 const db = require('../config/db.js');
-const { search } = require('../routes/staffRoute.js');
 
 const TABLE_NAME = 'project';
 const PROJECT_CATEGORY = 'project_category';
@@ -12,11 +11,14 @@ const projectModel = {
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE id = ?', [id]);
     },
+    findBySlug: (slug) => {
+        return db.query('SELECT * FROM ' + TABLE_NAME + ' WHERE slug = ?', [slug]);
+    },
     findBySearch: (searchTerm) => {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.description
+            p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
@@ -31,7 +33,7 @@ const projectModel = {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.description
+            p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
@@ -48,7 +50,7 @@ const projectModel = {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.description
+            p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
@@ -61,17 +63,17 @@ const projectModel = {
         `;
         return db.query(SQLQuery, [likeTerm, likeTerm, likeTerm]);
     },
-    create: (title, description, publication, link, image_path) => {
-        return db.query('INSERT INTO ' + TABLE_NAME + ' (title, description, publication, link, image_path) VALUES (?, ?, ?, ?, ?)',
+    create: (title, slug, description, publication, link, image_path) => {
+        return db.query('INSERT INTO ' + TABLE_NAME + ' (title, slug, description, publication, link, image_path) VALUES (?, ?, ?, ?, ?, ?)',
             [
-                title, description, publication, link, image_path
+                title, slug, description, publication, link, image_path
             ]
         );
     },
-    update: (id, title, description, publication, link, image_path) => {
-        return db.query('UPDATE ' + TABLE_NAME + ' SET title = ?, description = ?, publication = ?, link = ?, image_path = ? WHERE id = ?',
+    update: (id, title, slug, description, publication, link, image_path) => {
+        return db.query('UPDATE ' + TABLE_NAME + ' SET title = ?, slug = ?, description = ?, publication = ?, link = ?, image_path = ? WHERE id = ?',
             [
-                title, description, publication, link, image_path, id
+                title, slug, description, publication, link, image_path, id
             ]
         );
     },

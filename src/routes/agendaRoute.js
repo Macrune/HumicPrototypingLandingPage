@@ -26,6 +26,9 @@ const router = express.Router();
  *          title:
  *            type: string
  *            description: The title of the agenda
+ *          slug:
+ *            type: string
+ *            description: The slug of the agenda
  *          content:
  *            type: string
  *            description: The content/details of the agenda
@@ -43,6 +46,7 @@ const router = express.Router();
  *        example:
  *          id: 1
  *          title: "Team Meeting"
+ *          slug: "team-meeting"
  *          content: "Monthly team meeting to discuss project updates."
  *          date: "2023-11-15"
  *          image_url: "/img/agenda1.webp"
@@ -107,6 +111,33 @@ router.get('/', agendaController.getAllAgendas); // Handle ?sort and ?limit
  *          description: Server error
  */
 router.get('/:id', agendaController.getAgendaById);
+
+/**
+ * @swagger
+ * /api/agenda/slug/{slug}:
+ *  get:
+ *      summary: Retrieve an agenda by slug
+ *      tags: [Agenda]
+ *      parameters:
+ *        - in: path
+ *          name: slug
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: The agenda slug
+ *      responses:
+ *        200:
+ *          description: Agenda data
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Agenda'
+ *        404:
+ *          description: Agenda not found
+ *        500:
+ *          description: Server error
+ */
+router.get('/slug/:slug', agendaController.getAgendaBySlug);
 
 /**
  * @swagger
