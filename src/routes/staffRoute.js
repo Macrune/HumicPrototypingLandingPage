@@ -72,6 +72,13 @@ const router = express.Router();
  *  get:
  *      summary: Retrieve all staff
  *      tags: [Staff]
+ *      parameters:
+ *        - in: query
+ *          name: limit
+ *          schema:
+ *            type: integer
+ *          required: false
+ *          description: Limit the number of staff returned
  *      responses:
  *        200:
  *          description: A list of staffs

@@ -89,7 +89,11 @@ const projectController = {
         let imagePath = null;
 
         try {
-            imagePath = await uploadImage(image);
+            if (image) {
+                imagePath = await uploadImage(image);
+            } else {
+                imagePath = null;
+            }
             const [result] = await projectModel.create(title, description, publication, link, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'project', result.insertId, `${req.admin.username} Created project with title: ${title}`);
@@ -124,9 +128,13 @@ const projectController = {
 
             let imagepath = original.image_path;
             if (image) {
-                const oldFile = path.basename(imagepath);
-                await fileHelper.deleteFile(oldFile);
-                imagepath = await uploadImage(image);
+                if (imagepath) {
+                    const oldFile = path.basename(imagepath);
+                    await fileHelper.deleteFile(oldFile);
+                    imagepath = await uploadImage(image);
+                } else {
+                    imagepath = await uploadImage(image);
+                }
             }
 
             await projectModel.update(id, title, description, publication, link, imagepath);

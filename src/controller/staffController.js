@@ -18,8 +18,9 @@ const uploadImage = async (image) => {
 
 const staffController = {
     getAllStaff: async (req, res) => {
+        const { limit } = req.query;
         try {
-            const [rows] = await staffModel.findAll();
+            const [rows] = await staffModel.findAll(limit);
             res.json(rows);
         } catch (err) {
             res.status(500).json({ errorStaffRouteGe: err.message });
@@ -53,7 +54,11 @@ const staffController = {
         const image = req.file;
         let imagePath = null;
         try {
-            imagePath = await uploadImage(image);
+            if (image) {
+                imagePath = await uploadImage(image);
+            } else {
+                imagePath = null;
+            }
             const [result] = await staffModel.create( name, position, description, education, publication, email, linkedin, social_media, imagePath );
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'staff', result.insertId, `${req.admin.username} Created staff member with name: ${name}`);
@@ -94,9 +99,13 @@ const staffController = {
 
             let imagepath = original.image_path;
             if (image) {
-                const oldFile = path.basename(imagepath);
-                await fileHelper.deleteFile(oldFile);
-                imagepath = await uploadImage(image);
+                if (imagepath) {
+                    const oldFile = path.basename(imagepath);
+                    await fileHelper.deleteFile(oldFile);
+                    imagepath = await uploadImage(image);
+                } else {
+                    imagepath = await uploadImage(image);
+                }
             }
 
             const [result] = await staffModel.update(

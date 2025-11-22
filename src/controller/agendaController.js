@@ -41,8 +41,13 @@ const agendaController = {
         const { title, content, date } = req.body;
         const image = req.file;
         let imagePath = null;
+        console.log(req.headers)
         try {
-            imagePath = await uploadImage(image);
+            if (image){
+                imagePath = await uploadImage(image);
+            }else {
+                imagePath = null;
+            }
             const [result] = await agendaModel.create(title, content, date, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'agenda', result.insertId, `${req.admin.username} Created agenda with title: ${title}`);
@@ -71,9 +76,14 @@ const agendaController = {
             const original = rows[0];
             let imagepath = original.image_path;
             if (image) {
-                const oldFile = path.basename(imagepath);
-                await fileHelper.deleteFile(oldFile);
-                imagepath = await uploadImage(image);
+                if (imagepath) {
+                    const oldFile = path.basename(imagepath);
+                    await fileHelper.deleteFile(oldFile);
+                    imagepath = await uploadImage(image);
+                }else {
+                    imagepath = await uploadImage(image);
+                }
+                
             }
             await agendaModel.update(id, title ?? original.title, content ?? original.content, date ?? original.date, imagepath);
             const adminId = req.admin.id;

@@ -42,7 +42,11 @@ const partnerController = {
         const logo = req.file;
         let logoPath = null;
         try {
-            logoPath = await uploadImage(logo);
+            if (logo) {
+                logoPath = await uploadImage(logo);
+            } else {
+                logoPath = null;
+            }
             const [result] = await partnerModel.create(name, description, link, logoPath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'partner', result.insertId, `${req.admin.username} Created partner with name: ${name}`);
@@ -75,9 +79,13 @@ const partnerController = {
 
             let logoPath = original.logo;
             if (logo) {
-                const oldFile = path.basename(logoPath);
-                await fileHelper.deleteFile(oldFile);
-                logoPath = await uploadImage(logo);
+                if (logoPath) {
+                    const oldFile = path.basename(logoPath);
+                    await fileHelper.deleteFile(oldFile);
+                    logoPath = await uploadImage(logo);
+                } else {
+                    logoPath = await uploadImage(logo);
+                }
             }
 
             const [result] = await partnerModel.update(id, name, description, link, logoPath);

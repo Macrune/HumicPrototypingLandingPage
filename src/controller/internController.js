@@ -41,7 +41,11 @@ const internController = {
         const image = req.file;
         let imagePath = null;
         try {
-            imagePath = await uploadImage(image);
+            if (image) {
+                imagePath = await uploadImage(image);
+            } else {
+                imagePath = null;
+            }
             const [result] = await internModel.create(name, role, university, major, email, contact, linkedin, social_media, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'intern', result.insertId, `${req.admin.username} Created intern with name: ${name}`);
@@ -80,9 +84,13 @@ const internController = {
 
             let imagePath = original.image_path;
             if (image) {
-                const oldFile = path.basename(original.image_path);
-                await fileHelper.deleteFile(oldFile);
-                imagePath = await uploadImage(image);
+                if (imagePath) {
+                    const oldFile = path.basename(original.image_path);
+                    await fileHelper.deleteFile(oldFile);
+                    imagePath = await uploadImage(image);
+                } else {
+                    imagePath = await uploadImage(image);
+                }
             }
             await internModel.update(id, name, role, university, major, email, contact, linkedin, social_media, imagePath);
             const adminId = req.admin.id;

@@ -3,8 +3,14 @@ const db = require('../config/db.js');
 const TABLE_NAME = 'staff';
 
 const staffModel = {
-    findAll: () => {
-        return db.query('SELECT * FROM ' + TABLE_NAME);
+    findAll: (limit) => {
+        limit = parseInt(limit, 10) ;
+        let SQLQuery = 'SELECT * FROM ' + TABLE_NAME;
+
+        if (!isNaN(limit) && limit > 0) {
+            SQLQuery += ' LIMIT ' + limit;
+        }
+        return db.query(SQLQuery);
     },
     findById: (id) => {
         return db.query('SELECT * FROM ' + TABLE_NAME +' WHERE id = ?', [id]);

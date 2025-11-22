@@ -43,7 +43,11 @@ const announcementController = {
         const image = req.file;
         let imagePath = null;
         try {
-            imagePath = await uploadImage(image);
+            if (image) {
+                imagePath = await uploadImage(image);
+            }else {
+                imagePath = null;
+            }
             const [result] = await announcementModel.create(title, content, date, imagePath);
             const adminId = req.admin.id;
             await createLog(adminId, 'CREATE', 'announcement', result.insertId, `${req.admin.username} Created announcement with id: ${result.insertId}`);
@@ -76,9 +80,13 @@ const announcementController = {
             
             let imagepath = original.image_path;
             if (image) {
-                const oldFile = path.basename(imagepath);
-                await fileHelper.deleteFile(oldFile);
-                imagepath = await uploadImage(image);
+                if (imagepath) {
+                    const oldFile = path.basename(imagepath);
+                    await fileHelper.deleteFile(oldFile);
+                    imagepath = await uploadImage(image);
+                }else {
+                    imagepath = await uploadImage(image);
+                }
             }
             await announcementModel.update(id, title, content, date, imagepath);
             const adminId = req.admin.id;

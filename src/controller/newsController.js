@@ -42,7 +42,11 @@ const newsController = {
         const image = req.file;
         let imagePath = null;
         try {
-            imagePath = await uploadImage(image);
+            if (image) {
+                imagePath = await uploadImage(image);
+            } else {
+                imagePath = null;
+            }
             const author = req.body.author || 'Admin';
             const [result] = await newsModel.create(title, content, author, date, imagePath);
             const adminId = req.admin.id;
@@ -77,9 +81,13 @@ const newsController = {
 
             let imagepath = original.image_path;
             if (image) {
-                const oldFile = path.basename(imagepath);
-                await fileHelper.deleteFile(oldFile);
-                imagepath = await uploadImage(image);
+                if (imagepath) {
+                    const oldFile = path.basename(imagepath);
+                    await fileHelper.deleteFile(oldFile);
+                    imagepath = await uploadImage(image);
+                } else {
+                    imagepath = await uploadImage(image);
+                }
             }
             await newsModel.update(id, title, content, author, date, imagepath);
             const adminId = req.admin.id;
