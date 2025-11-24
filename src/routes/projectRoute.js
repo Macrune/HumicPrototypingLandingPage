@@ -128,7 +128,7 @@ router.get('/search/internship', projectController.getProjectBySearchInternship)
 
 /**
  * @swagger
- * /api/project/search/researchshi[]:
+ * /api/project/search/researchship:
  *  get:
  *      summary: Retrieve a list of project with researchship category based on query given
  *      tags: [Project]
