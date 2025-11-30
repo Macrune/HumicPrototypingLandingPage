@@ -18,7 +18,7 @@ const projectModel = {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.slug, p.description
+            p.id, p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
@@ -33,7 +33,7 @@ const projectModel = {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.slug, p.description
+            p.id, p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
@@ -50,7 +50,7 @@ const projectModel = {
         const likeTerm = '%' + searchTerm + '%';
         const SQLQuery = `
         SELECT 
-            p.title, p.slug, p.description
+            p.id, p.title, p.slug, p.description
         FROM ${TABLE_NAME} p
         LEFT JOIN ${PROJECT_CATEGORY} pc ON p.id = pc.id_project
         LEFT JOIN ${CATEGORY_TABLE} c ON pc.id_category = c.id
