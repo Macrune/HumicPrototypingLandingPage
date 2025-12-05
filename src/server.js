@@ -14,6 +14,7 @@ const projectMemberRouter = require('./routes/projectMemberRoute.js');
 const adminRouter = require('./routes/adminRoute.js');
 const logsRouter = require('./routes/logsRoute.js');
 const bannerRouter = require('./routes/bannerRoute.js');
+const statisticRoute = require('./routes/statisticRoute.js');
 const path = require('path');
 const swagger =require('./docs/swagger.js');
 
@@ -38,6 +39,7 @@ app.use('/api/project_member', projectMemberRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/banner', bannerRouter);
+app.use('/api/statistics', statisticRoute);
 
 
 app.use('/img', express.static(path.join(__dirname, process.env.IMG_DIR || 'img')));

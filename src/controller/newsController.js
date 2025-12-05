@@ -61,7 +61,8 @@ const newsController = {
             } else {
                 imagePath = null;
             }
-            const author = req.body.author || 'Admin';
+            
+            const author = req.body.author || req.admin.username;
             const slugTitle = await slug(title, 'news');
             const [result] = await newsModel.create(title, slugTitle, content, author, date, imagePath);
             const adminId = req.admin.id;

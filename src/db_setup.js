@@ -177,6 +177,14 @@ connection.connect((err) => {
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );
 
+            CREATE TABLE statistic_data (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                value VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+
             INSERT INTO admin (username, password_hash, role)
                 VALUES ('master admin', '$2b$10$weSjUS67T/jO0sGVQenAjuTOFLgqRS4FGf/CcJvIZM.wbSBBNznra', 'Master Admin');
             INSERT INTO category (name)
