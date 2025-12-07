@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const db = require('./config/db');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -9,7 +10,8 @@ const connection = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-    multipleStatements: true
+    multipleStatements: true,
+    ssl:{ca:fs.readFileSync("src/config/DigiCertGlobalRootG2.crt (1).pem")}
 });
 
 connection.connect((err) => {

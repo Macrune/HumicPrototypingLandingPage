@@ -6,7 +6,7 @@ const options = {
         openapi: '3.0.0',
         info: {
             title: 'Humic Prototyping Landing Page API',
-            version: '1.0.0',
+            version: '1.3.0',
             description: 'API for managin content on Humic Prototyping Landing Page',
         },
         components: {
