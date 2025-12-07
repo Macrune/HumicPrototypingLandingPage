@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -28,7 +28,7 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-      
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -51,13 +51,13 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_702F37581266492384D7E1CA7A5866C8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C84ADBF3674B452E9F27F4D96A8A51C7 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_230DD438C9764158B0D4F5302FBAB679 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9FACB16C765A48F0916E798B4E781665 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7C61BD22270846759C28504171E9573A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_425A1001C75D455D871ABB5CF6758A71 }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'humicapi'
           slot-name: 'Production'
