@@ -9,7 +9,7 @@ const newsModel = {
     fidAllSorted: (order = 'DESC', limit) => {
         const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
         limit = parseInt(limit, 10) ;
-        let SQLQuery = 'SELECT id, slug, title, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
+        let SQLQuery = 'SELECT id, slug, title, content, author, date, image_path FROM ' + TABLE_NAME + ' ORDER BY date ' + sortOrder;
 
         if (!isNaN(limit) && limit > 0) {
             SQLQuery += ' LIMIT ' + limit;
