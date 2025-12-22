@@ -42,6 +42,7 @@ The database consists of the following tables:
 12. **category** — Kategori proyek yang digunakan untuk pengelompokan.
 13. **project_category** — Relasi antara proyek dan kategori.
 14. **partnership** — Data mitra kerja sama HUMIC, termasuk deskripsi, tautan, dan logo.
+15. **statistic_data** — Data statistik ringkas untuk ditampilkan di website.
 
 ---
 
